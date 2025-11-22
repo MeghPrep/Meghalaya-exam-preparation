@@ -59,6 +59,250 @@ footer{margin-top:24px;color:var(--muted);font-size:13px;text-align:center}
         <div class="big-btn" id="btnPractice"><h3>Start Practice</h3><div class="muted">Practice mode, validate and view solutions immediately</div></div>
         <div class="big-btn" id="btnMock"><h3>Start Mock Test</h3><div class="muted">Choose timer, full test experience. Solutions after submit</div></div>
         <div style="display:flex;gap:12px">
+          <div class="big-btn" id="btnAbout" style="flex:1"><h3>About</h3>
+          <div class="muted">App info and copyright</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Timer select -->
+    <div id="timerSelect" class="card hidden">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-weight:700">Select Mock Test Duration</div>
+        <div class="row">
+          <button class="btn primary" data-min="60">60 min</button>
+          <button class="btn primary" data-min="90">90 min</button>
+          <button class="btn primary" data-min="120">120 min</button>
+          <button class="btn primary" data-min="150">150 min</button>
+          <button class="btn" id="cancelTimer">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <!-- Quiz -->
+    <div id="quiz" class="card hidden" style="width:100%">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div><strong id="modeLabel">Practice</strong></div>
+        <div class="muted">Q <span id="qIndex">1</span> / <span id="qTotal">0</span></div>
+        <div class="timer" id="timerDisplay">Practice</div>
+      </div>
+      <div class="qcard">
+        <div class="qtext" id="qText">Loading...</div>
+        <div class="options" id="options"></div>
+        <div style="margin-top:10px"><button id="validate" class="btn primary">Validate Answer</button></div>
+        <div style="margin-top:8px"><button id="more" class="btn">More Details</button></div>
+        <div class="controls">
+          <button id="prev" class="btn">Previous</button>
+          <button id="next" class="btn primary">Next</button>
+          <button id="submitTest" class="btn" style="margin-left:auto;display:none">Submit Test</button>
+        </div>
+        <div id="solution" class="solution hidden"></div>
+      </div>
+    </div>
+    <!-- Result -->
+    <div id="result" class="card hidden">
+      <div style="font-weight:700">Result</div>
+      <div class="muted" id="scoreText" style="margin-top:8px">You scored 0 / 0</div>
+      <div style="margin-top:12px" class="row">
+        <button id="review" class="btn">Review Answers</button>
+        <button id="goHome" class="btn">Home</button>
+      </div>
+      <div id="reviewArea" style="margin-top:12px"></div>
+    </div>
+    <!-- About -->
+    <div id="about" class="card hidden">
+      <div style="font-weight:700">About</div>
+      <div class="muted" style="margin-top:8px">Meghalaya Exam Preparation</div>
+      <div class="muted" style="margin-top:8px">Protection notes: encrypt your question bank before publishing.</div>
+      <div style="margin-top:12px" class="muted">© 2025 Wanpyndapbiang Nongrang. All rights reserved.</div>
+      <div style="margin-top:12px"><button id="aboutHome" class="btn">Back</button></div>
+    </div>
+    <footer class="muted">Wish you best exam Preparation.</footer>
+  </div>
+</div>
+<div class="watermark">Meghalaya Exam Preparation</div>
+
+<!-- Modal for submission -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <h2>Test Submitted!</h2>
+    <p id="modalScore">Score: 0 / 0</p>
+    <p id="modalPerc">Percentage: 0%</p>
+    <button id="closeModal">OK</button>
+  </div>
+</div>
+<script src="questions.js"></script>
+<script>
+// --- existing JS logic stays intact ---
+const defaultTitle = "Meghalaya Exam Preparation";
+const paperTitle = "MPSC LDA cum Typist 2025";
+let idx=0, mode='practice', answers={}, validated={}, mockRemaining=0, mockTimer=null;
+const homeEl=document.getElementById('home');
+const timerEl=document.getElementById('timerSelect');
+const quizEl=document.getElementById('quiz');
+const resultEl=document.getElementById('result');
+const aboutEl=document.getElementById('about');
+const qText=document.getElementById('qText');
+const optionsEl=document.getElementById('options');
+const qIndexEl=document.getElementById('qIndex');
+const qTotalEl=document.getElementById('qTotal');
+const timerDisplay=document.getElementById('timerDisplay');
+const modeLabel=document.getElementById('modeLabel');
+const solutionEl=document.getElementById('solution');
+const validateBtn=document.getElementById('validate');
+const moreBtn=document.getElementById('more');
+const submitBtn=document.getElementById('submitTest');
+qTotalEl.textContent = questions.length;
+
+// Home buttons
+document.getElementById('btnPractice').addEventListener('click', ()=>startPractice(0));
+document.getElementById('btnMock').addEventListener('click', ()=>{ homeEl.classList.add('hidden'); timerEl.classList.remove('hidden'); });
+document.getElementById('btnAbout').addEventListener('click', ()=>{ homeEl.classList.add('hidden'); aboutEl.classList.remove('hidden'); });
+document.getElementById('aboutHome').addEventListener('click', ()=>{ aboutEl.classList.add('hidden'); homeEl.classList.remove('hidden'); });
+document.getElementById('cancelTimer').addEventListener('click', ()=>{ timerEl.classList.add('hidden'); homeEl.classList.remove('hidden'); });
+document.querySelectorAll('#timerSelect button[data-min]').forEach(b=>b.addEventListener('click', ()=>startMock(parseInt(b.dataset.min))));
+
+// Quiz navigation
+document.getElementById('prev').addEventListener('click', ()=>{ if(idx>0){ idx--; render(); }});
+document.getElementById('next').addEventListener('click', ()=>{ if(idx < questions.length-1){ idx++; render(); } else { if(mode==='mock'){ alert('Last question reached. Submit when ready.'); } else { alert('End of paper.'); } }});
+document.getElementById('goHome').addEventListener('click', ()=>{ location.reload(); });
+document.getElementById('review').addEventListener('click', ()=>{ document.getElementById('reviewArea').scrollIntoView({behavior:'smooth'});});
+validateBtn.addEventListener('click', handleValidate);
+moreBtn.addEventListener('click', handleMore);
+
+// Modal
+const modal=document.getElementById('modal');
+const modalScore=document.getElementById('modalScore');
+const modalPerc=document.getElementById('modalPerc');
+document.getElementById('closeModal').addEventListener('click', ()=>{ modal.classList.remove('show'); resultEl.classList.remove('hidden'); });
+
+// Functions (same as before, only change submitMock to show modal)
+function setHeading(isHome){ document.getElementById('appTitle').textContent = isHome?defaultTitle:paperTitle; }
+function showHome(){ homeEl.classList.remove('hidden'); timerEl.classList.add('hidden'); quizEl.classList.add('hidden'); resultEl.classList.add('hidden'); aboutEl.classList.add('hidden'); setHeading(true); }
+function startPractice(startIndex=0){ setHeading(false); mode='practice'; idx=startIndex; answers={}; validated={}; mockRemaining=0; clearInterval(mockTimer); timerDisplay.textContent='Practice'; modeLabel.textContent='Practice'; homeEl.classList.add('hidden'); timerEl.classList.add('hidden'); quizEl.classList.remove('hidden'); submitBtn.style.display='none'; render(); history.pushState({}, "");}
+function startMock(minutes){ setHeading(false); mode='mock'; idx=0; answers={}; validated={}; mockRemaining=minutes*60; modeLabel.textContent='Mock Test'; homeEl.classList.add('hidden'); timerEl.classList.add('hidden'); quizEl.classList.remove('hidden'); submitBtn.style.display='inline-block'; startTimer(); render(); history.pushState({}, "");}
+function startTimer(){ clearInterval(mockTimer); updateTimer(); mockTimer=setInterval(()=>{ mockRemaining--; updateTimer(); if(mockRemaining<=0){ clearInterval(mockTimer); submitMock(); } },1000); history.pushState({}, "");}
+function updateTimer(){ if(mode!=='mock'){ timerDisplay.textContent='Practice'; return; } let s=mockRemaining; const hh=Math.floor(s/3600); s%=3600; const mm=Math.floor(s/60); const ss=s%60; timerDisplay.textContent=`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`; }
+function render(){ const q=questions[idx]; if(!q) return; qIndexEl.textContent=idx+1; qText.textContent=`${q.id}. ${q.question}`; optionsEl.innerHTML=''; solutionEl.classList.add('hidden'); moreBtn.style.display = validated[q.id]?'inline-block':'none'; moreBtn.textContent='More Details'; ['a','b','c','d'].forEach(letter=>{ const div=document.createElement('div'); div.className='opt'; div.dataset.opt=letter; div.innerHTML=`<strong>${letter.toUpperCase()})</strong> ${q[letter]}`; div.addEventListener('click', ()=>selectOption(div,q)); if(answers[q.id]===letter) div.classList.add('selected'); optionsEl.appendChild(div); }); if(validated[q.id]){ applyFeedback(q); solutionEl.innerHTML=`<div style="font-weight:700">Solution</div><div style="margin-top:8px;color:var(--muted)">${q.solution||'No solution provided'}</div>`; solutionEl.classList.remove('hidden'); } }
+function selectOption(elem,q){ if(validated[q.id]){ validated[q.id]=false; clearFeedback(); solutionEl.classList.add('hidden'); } Array.from(optionsEl.children).forEach(n=>n.classList.remove('selected')); elem.classList.add('selected'); answers[q.id]=elem.dataset.opt; }
+function clearFeedback(){ Array.from(optionsEl.children).forEach(n=>n.classList.remove('correct','wrong')); }
+function handleValidate(){ const q=questions[idx]; if(!q) return; const chosen=answers[q.id]; if(!chosen){ alert('Select an option first'); return; } validated[q.id]=true; applyFeedback(q); if(mode==='practice'){ solutionEl.innerHTML=`<div style="font-weight:700">Solution</div><div style="margin-top:8px;color:var(--muted)">${q.solution||'No solution provided'}</div>`; solutionEl.classList.remove('hidden'); } }
+function applyFeedback(q){
+  clearFeedback();
+  Array.from(optionsEl.children).forEach(n=>{
+    const opt=n.dataset.opt;
+    if(opt===q.answer) n.classList.add('correct');
+    if(answers[q.id] && opt===answers[q.id] && answers[q.id]!==q.answer) n.classList.add('wrong');
+    if(answers[q.id] && opt===answers[q.id]) n.classList.add('selected');
+  });
+}
+
+function handleMore(){
+  const q=questions[idx]; if(!q) return;
+  if(mode==='mock'){ const ok=confirm('More details are locked in Mock Test until you submit. Do you want to view and forfeit mock experience?'); if(!ok) return; }
+  if(solutionEl.classList.contains('hidden')){
+    solutionEl.innerHTML=`<div style="font-weight:700">Solution</div><div style="margin-top:8px;color:var(--muted)">${q.solution||'No solution provided'}</div>`;
+    solutionEl.classList.remove('hidden'); moreBtn.textContent='Hide Details';
+  } else { solutionEl.classList.add('hidden'); moreBtn.textContent='More Details'; }
+}
+
+// Submit Mock Test
+function submitMock(){
+  if(mockTimer) clearInterval(mockTimer);
+  const totalQuestions=questions.length;
+  const maxScore=totalQuestions*2;
+  let score=0;
+  questions.forEach(q=>{
+    const user=answers[q.id];
+    if(user===q.answer) score+=2;
+    else if(user && user!==q.answer) score-=0.5;
+  });
+  if(score<0) score=0;
+  const percentage=((score/maxScore)*100).toFixed(2);
+
+  // Show modal instead of alert
+  modalScore.textContent=`Score: ${score} / ${maxScore}`;
+  modalPerc.textContent=`Percentage: ${percentage}%`;
+  modal.classList.add('show');
+
+  // Update result page content in background
+  quizEl.classList.add('hidden');
+  resultEl.classList.remove('hidden');
+  document.getElementById('scoreText').textContent=`You scored ${score} / ${maxScore} (${percentage}%)`;
+  const review=document.getElementById('reviewArea');
+  review.innerHTML='';
+  questions.forEach(q=>{
+    const user=answers[q.id]||'';
+    const div=document.createElement('div');
+    div.innerHTML = `<div class="qcard" style="margin-top:8px">
+      <div class="qtext">${q.id}. ${q.question}</div>
+      <div class="options">
+        ${['a','b','c','d'].map(letter=>{
+          let cls = '';
+          if(letter === q.answer) cls = 'correct';
+          if(user === letter && user !== q.answer) cls = 'wrong';
+          return `<div class="opt ${cls}"><strong>${letter.toUpperCase()})</strong> ${q[letter]}</div>`;
+        }).join('')}
+      </div>
+      <div class="solution" style="margin-top:4px;color:var(--muted)">${q.solution}</div>
+    </div>`;
+    review.appendChild(div);
+  });
+}
+
+// Submit button
+submitBtn.addEventListener('click', ()=>{
+  const confirmSubmit = confirm("Are you sure you want to submit the test?");
+  if(confirmSubmit) submitMock();
+});
+
+// Initialize
+// Back button navigation fix
+document.addEventListener("keydown", function(e){
+  if(e.key === "Backspace" || e.key === "Escape"){
+    goBack();
+  }
+});
+
+window.addEventListener("popstate", goBack);
+
+function goBack(){
+  if(!homeEl.classList.contains("hidden")){
+    return;
+  }
+  quizEl.classList.add("hidden");
+  resultEl.classList.add("hidden");
+  aboutEl.classList.add("hidden");
+  timerEl.classList.add("hidden");
+  homeEl.classList.remove("hidden");
+  setHeading(true);
+}
+showHome();
+</script>
+</body>
+</html>.solution{margin-top:14px;padding:14px;border-radius:10px;background:rgba(255,255,255,0.03);color:var(--muted)}
+.timer{font-weight:700;color:var(--blue)}
+footer{margin-top:24px;color:var(--muted);font-size:13px;text-align:center}
+.watermark{position:fixed;right:12px;bottom:12px;color:rgba(255,255,255,0.05);pointer-events:none;transform:rotate(-18deg);font-weight:700;font-size:22px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:0.3s}
+.overlay.show{opacity:1;pointer-events:auto;}
+.modal{background:var(--card);padding:22px;border-radius:14px;min-width:280px;box-shadow:0 12px 30px rgba(0,0,0,0.7);text-align:center;}
+.modal h2{margin:0 0 12px 0;color:var(--gold)}
+.modal p{margin:6px 0;font-weight:500}
+.modal button{margin-top:14px;padding:10px 18px;border:none;border-radius:10px;background:var(--blue);color:#fff;cursor:pointer;transition:0.2s}
+.modal button:hover{background:#1565C0}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:520px){.qtext{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="center">
+    <h1 id="appTitle">Meghalaya Exam Preparation</h1>
+    <!-- Home -->
+    <div id="home" class="card">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="big-btn" id="btnPractice"><h3>Start Practice</h3><div class="muted">Practice mode, validate and view solutions immediately</div></div>
+        <div class="big-btn" id="btnMock"><h3>Start Mock Test</h3><div class="muted">Choose timer, full test experience. Solutions after submit</div></div>
+        <div style="display:flex;gap:12px">
           <div class="big-btn" id="btnAbout" style="flex:1"><h3>About</h3><div class="muted">App info and copyright</div></div>
         </div>
       </div>
