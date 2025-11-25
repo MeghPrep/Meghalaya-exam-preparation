@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz - Meghalaya Exam Prep</title>
+<style>
+:root {
+  --bg:#0A0A0A; --card:#1E1E1E; --blue:#1976D2; --green:#43A047; --red:#E53935;
+  --gold:#FFD700; --text:#FFFFFF; --muted:#AAAAAA; --accent-weak:#555555;
+  --border:#333333;
+}
+body {
+  margin:0; font-family:Arial,sans-serif; background:var(--bg); color:var(--text);
+}
+.container { max-width:800px; margin:0 auto; padding:16px; }
+.page-header { margin-bottom:16px; }
+.page-title { font-size:28px; margin:0 0 4px; }
+.page-subtitle { color:var(--muted); margin:0; }
+.card { background:var(--card); padding:16px; margin-bottom:16px; border-radius:10px; }
+.card-interactive { cursor:pointer; transition:0.2s; }
+.card-interactive:hover { background:rgba(255,255,255,0.05); }
+.btn { cursor:pointer; padding:8px 16px; border:none; border-radius:6px; margin:4px 0; color:var(--text); background:var(--blue); font-weight:600; }
+.btn-primary { background:var(--gold); color:#000; }
+.btn-success { background:var(--green); color:#fff; }
+.flex { display:flex; }
+.flex-col { flex-direction:column; }
+.gap-2 { gap:8px; }
+.mt-2 { margin-top:8px; }
+.text-center { text-align:center; }
+.selected { outline:2px solid var(--accent-weak); }
+.correct { background:rgba(67,160,71,0.2); border-color:var(--green); color:var(--green); font-weight:600; }
+.wrong { background:rgba(229,57,53,0.1); border-color:var(--red); color:var(--red); font-weight:600; }
+.hidden { display:none; }
+.confetti { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="timerSelection" class="hidden">
+    <div class="page-header">
+      <h1 class="page-title">Select Timer (Mock Test)</h1>
+      <p class="page-subtitle">Choose test duration</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn btn-primary" onclick="startTimer(60)">60 min</button>
+      <button class="btn btn-primary" onclick="startTimer(90)">90 min</button>
+      <button class="btn btn-primary" onclick="startTimer(120)">120 min</button>
+    </div>
+  </div>
+
+  <div id="quizContainer" class="hidden">
+    <div class="flex justify-between items-center mb-2">
+      <div><strong id="modeLabel">Practice Mode</strong></div>
+      <div class="muted" id="qNumber">Q 1 / 1</div>
+      <div id="timerDisplay" style="font-weight:700; color:var(--blue);">Practice</div>
+    </div>
+
+    <div class="card" id="questionCard">
+      <div id="questionText" style="font-size:18px; font-weight:500; margin-bottom:12px;"></div>
+      <div class="flex flex-col gap-2" id="optionsContainer"></div>
+      <div class="mt-2">
+        <button class="btn btn-primary" onclick="validateAnswer()">Validate Answer</button>
+        <button class="btn" id="toggleSolutionBtn" onclick="toggleSolution()" class="hidden">More Details</button>
+      </div>
+      <div id="solutionPanel" class="mt-2 hidden" style="padding:14px; border-radius:10px; background:rgba(255,255,255,0.03);">
+        <div style="font-weight:700; margin-bottom:8px;">Solution</div>
+        <div id="solutionText" class="muted"></div>
+        <a href="#" target="_blank" id="youtubeLink" class="btn mt-2" style="display:none;">Watch Video Solution</a>
+      </div>
+      <div class="flex gap-2 mt-2">
+        <button class="btn" onclick="prevQuestion()">Previous</button>
+        <button class="btn btn-primary" onclick="nextQuestion()">Next</button>
+        <button class="btn btn-success" onclick="submitQuiz()" id="submitBtn">Submit Test</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultContainer" class="hidden text-center card">
+    <div style="font-size:24px; font-weight:700; margin-bottom:8px;">Test Submitted!</div>
+    <div id="scoreDisplay" style="font-size:20px; margin-bottom:8px;"></div>
+    <div id="percentageDisplay" style="font-size:18px; margin-bottom:12px;"></div>
+    <button class="btn btn-primary" onclick="goHome()">Go Home</button>
+  </div>
+</div>
+
+<canvas id="confettiCanvas" class="confetti"></canvas>
+
+<script>
+// Mock Data (admin adds these)
+const quizMode = 'practice'; // 'practice' or 'mock'
+const questions = [
+  {
+    id:'q1', questionNumber:1, questionText:'What is 2+2?', 
+    optionA:'3', optionB:'4', optionC:'5', optionD:'6',
+    correctAnswer:'B', solution:'2+2=4', youtubeUrl:'https://www.youtube.com/'
+  },
+  {
+    id:'q2', questionNumber:2, questionText:'Capital of Meghalaya?', 
+    optionA:'Shillong', optionB:'Guwahati', optionC:'Kohima', optionD:'Imphal',
+    correctAnswer:'A', solution:'Shillong is the capital', youtubeUrl:''
+  }
+];
+
+let currentIndex = 0;
+let answers = {};
+let validated = {};
+let showSolution = false;
+let timerMinutes = quizMode==='mock'?60:0;
+let timeRemaining = 0;
+let timerInterval = null;
+
+const modeLabel = document.getElementById('modeLabel');
+const qNumber = document.getElementById('qNumber');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const solutionPanel = document.getElementById('solutionPanel');
+const solutionText = document.getElementById('solutionText');
+const toggleSolutionBtn = document.getElementById('toggleSolutionBtn');
+const youtubeLink = document.getElementById('youtubeLink');
+const timerDisplay = document.getElementById('timerDisplay');
+
+function loadQuestion() {
+  const q = questions[currentIndex];
+  qNumber.textContent = `Q ${currentIndex+1} / ${questions.length}`;
+  questionText.textContent = `${q.questionNumber}. ${q.questionText}`;
+  optionsContainer.innerHTML='';
+  ['A','B','C','D'].forEach(option=>{
+    const optText = q['option'+option];
+    const div = document.createElement('div');
+    div.className='card card-interactive';
+    div.style.padding='14px'; div.style.border='1px solid var(--border)'; div.style.borderRadius='10px';
+    if(answers[q.id]===option) div.classList.add('selected');
+    if(validated[q.id]){
+      if(option===q.correctAnswer) div.classList.add('correct');
+      if(answers[q.id]===option && answers[q.id]!==q.correctAnswer) div.classList.add('wrong');
+    }
+    div.innerHTML=`<strong>${option})</strong> ${optText}`;
+    div.onclick=()=>{ selectOption(option); };
+    optionsContainer.appendChild(div);
+  });
+  solutionPanel.classList.add('hidden');
+  toggleSolutionBtn.style.display=validated[q.id]?'inline-block':'none';
+  solutionText.textContent = q.solution || 'No solution provided';
+  if(q.youtubeUrl) { youtubeLink.href=q.youtubeUrl; youtubeLink.style.display='inline-flex'; } else youtubeLink.style.display='none';
+}
+
+function selectOption(option){ answers[questions[currentIndex].id]=option; loadQuestion(); }
+
+function validateAnswer(){ 
+  const q=questions[currentIndex];
+  if(!answers[q.id]) { alert('Please select an option'); return; }
+  validated[q.id]=true;
+  if(quizMode==='practice') showSolution=true;
+  loadQuestion();
+}
+
+function toggleSolution(){ showSolution=!showSolution; solutionPanel.classList.toggle('hidden',!showSolution); }
+
+function nextQuestion(){ if(currentIndex<questions.length-1){ currentIndex++; showSolution=false; loadQuestion(); } else alert('Last question'); }
+function prevQuestion(){ if(currentIndex>0){ currentIndex--; showSolution=false; loadQuestion(); } }
+
+function startTimer(minutes){ timerMinutes=minutes; timeRemaining=minutes*60; document.getElementById('timerSelection').classList.add('hidden'); document.getElementById('quizContainer').classList.remove('hidden'); startCountdown(); loadQuestion(); }
+function startCountdown(){
+  timerInterval=setInterval(()=>{
+    if(timeRemaining<=0){ clearInterval(timerInterval); submitQuiz(); return; }
+    timeRemaining--; const m=Math.floor(timeRemaining/60); const s=timeRemaining%60;
+    timerDisplay.textContent=`${m}:${s<10?'0'+s:s}`;
+  },1000);
+}
+
+function submitQuiz(){
+  clearInterval(timerInterval);
+  let score=0;
+  questions.forEach(q=>{
+    const ans=answers[q.id];
+    if(ans===q.correctAnswer) score+=2;
+    else if(ans && ans!==q.correctAnswer) score-=0.5;
+  });
+  if(score<0) score=0;
+  const maxScore=questions.length*2;
+  const percentage=((score/maxScore)*100).toFixed(2);
+  document.getElementById('quizContainer').classList.add('hidden');
+  const res=document.getElementById('resultContainer');
+  res.classList.remove('hidden');
+  document.getElementById('scoreDisplay').textContent=`Score: ${score}/${maxScore}`;
+  document.getElementById('percentageDisplay').textContent=`Percentage: ${percentage}%`;
+  startConfetti();
+}
+
+function goHome(){ location.href='homepage.html'; }
+
+// Initialize
+if(quizMode==='mock'){ document.getElementById('timerSelection').classList.remove('hidden'); } else { document.getElementById('quizContainer').classList.remove('hidden'); loadQuestion(); }
+
+// Confetti Animation
+const confettiCanvas = document.getElementById('confettiCanvas');
+const ctx = confettiCanvas.getContext('2d');
+confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight;
+let confettiParticles=[];
+function createConfetti(){ for(let i=0;i<150;i++){ confettiParticles.push({x:Math.random()*confettiCanvas.width,y:Math.random()*confettiCanvas.height,r:Math.random()*6+4,dx:(Math.random()-0.5)*5,dy:Math.random()*5,color:`hsl(${Math.random()*360},70%,50%)`}); } }
+function drawConfetti(){ ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); confettiParticles.forEach(p=>{ ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.y>confettiCanvas.height){ p.y=0; p.x=Math.random()*confettiCanvas.width; } }); requestAnimationFrame(drawConfetti); }
+function startConfetti(){ createConfetti(); drawConfetti(); setTimeout(()=>{ confettiParticles=[]; ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); },5000); }
+</script>
+</body>
+</html>

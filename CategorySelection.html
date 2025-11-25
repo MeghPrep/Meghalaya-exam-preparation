@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Exam Category</title>
+<style>
+:root {
+    --bg: #0A0A0A;
+    --card: #1E1E1E;
+    --blue: #1976D2;
+    --gold: #FFD700;
+    --text: #FFFFFF;
+    --muted: #AAAAAA;
+    --border: #333333;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.page-title {
+    font-size: 28px;
+    margin: 0 0 6px 0;
+    color: var(--gold);
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: var(--muted);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 16px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background: #1565c0;
+}
+
+.card {
+    background: var(--card);
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    cursor: default;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.card-interactive {
+    cursor: pointer;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.flex {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <button class="btn" id="backBtn">&#8592; Back to Home</button>
+
+    <div class="page-header">
+        <h1 class="page-title" id="pageTitle">Select Exam</h1>
+        <p class="page-subtitle" id="pageSubtitle">Choose an exam category</p>
+    </div>
+
+    <div id="categoriesContainer" class="flex-col"></div>
+</div>
+
+<script>
+// Read categories from localStorage
+function getCategories() {
+    const categoriesData = localStorage.getItem('categories');
+    return categoriesData ? JSON.parse(categoriesData) : [];
+}
+
+// Render categories dynamically
+function renderCategories() {
+    const container = document.getElementById('categoriesContainer');
+    container.innerHTML = '';
+
+    const categories = getCategories();
+    if (categories.length === 0) {
+        const noDataCard = document.createElement('div');
+        noDataCard.className = 'card';
+        noDataCard.textContent = 'No categories yet. Please ask admin to create some.';
+        container.appendChild(noDataCard);
+        return;
+    }
+
+    categories.forEach(cat => {
+        const card = document.createElement('div');
+        card.className = 'card card-interactive';
+        card.innerHTML = `
+            <h3 style="margin-bottom:6px; font-size:20px;">${cat.name}</h3>
+            <div class="muted">${cat.description || 'No description'}</div>
+            <div class="muted mt-1">${cat.paperCount || 0} question papers available</div>
+        `;
+        card.onclick = () => {
+            localStorage.setItem('selectedCategory', JSON.stringify(cat));
+            alert(`You selected: ${cat.name}`);
+            // Here you can redirect to papers page if implemented:
+            // window.location.href = `papers.html?categoryId=${cat.id}`;
+        };
+        container.appendChild(card);
+    });
+}
+
+// Back button functionality
+document.getElementById('backBtn').onclick = () => {
+    window.location.href = 'homepage.html';
+};
+
+// Initialize page
+renderCategories();
+</script>
+</body>
+</html>

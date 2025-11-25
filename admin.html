@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Meghalaya Exam Prep — Admin</title>
+<style>
+/* --------------------------
+   Dark professional theme
+   -------------------------- */
+:root{
+  --bg:#06070a;
+  --panel:#0f1317;
+  --card:#11161a;
+  --accent:#0f4c75;    /* deep blue */
+  --accent-2:#2f7fb3;
+  --muted:#98a4ad;
+  --text:#e6eef6;
+  --danger:#e16b6b;
+  --success:#32c48d;
+  --glass: rgba(255,255,255,0.03);
+  --radius:12px;
+  --shadow: 0 10px 30px rgba(2,6,23,0.6);
+  --mono: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+*{box-sizing:border-box}
+html,body{height:100%; margin:0; font-family:var(--mono); background:linear-gradient(180deg,var(--bg),#081018 140%); color:var(--text); -webkit-font-smoothing:antialiased}
+a{color:inherit}
+
+/* wrapper */
+.container{max-width:1180px; margin:28px auto; padding:18px; display:flex; gap:18px; align-items:flex-start; min-height:78vh}
+
+/* sidebar */
+.sidebar{width:300px; min-width:220px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:18px; border:1px solid var(--glass); box-shadow:var(--shadow); position:sticky; top:22px}
+.brand{display:flex; gap:12px; align-items:center; margin-bottom:8px}
+.logo{width:48px; height:48px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); font-weight:800; color:#08111a}
+.brand h1{margin:0; font-size:16px; color:var(--accent); letter-spacing:0.2px}
+.brand p{margin:0; font-size:12px; color:var(--muted)}
+
+/* nav */
+.nav{display:flex; flex-direction:column; gap:10px; margin-top:12px}
+.nav button{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; background:transparent; border:1px solid transparent; color:var(--accent-2); font-weight:700; cursor:pointer; transition:all .14s}
+.nav button:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,76,117,0.06)}
+.nav button.active{background:linear-gradient(90deg, rgba(15,76,117,0.08), rgba(47,127,179,0.02)); border:1px solid rgba(47,127,179,0.06); color:var(--accent-2)}
+
+/* content */
+.content{flex:1; display:flex; flex-direction:column; gap:16px}
+
+/* header inside content */
+.header{display:flex; justify-content:space-between; align-items:center; gap:12px}
+.header .title{display:flex; flex-direction:column}
+.header h2{margin:0; color:var(--accent); font-size:20px}
+.header p{margin:0; color:var(--muted); font-size:13px}
+.header .menu{display:flex; align-items:center; gap:8px}
+
+/* menu icon */
+.menu-btn{background:transparent; color:var(--muted); border:1px solid transparent; padding:8px 10px; border-radius:8px; cursor:pointer}
+.menu-pop{position:absolute; right:28px; top:72px; background:var(--card); border-radius:10px; padding:8px; border:1px solid var(--glass); box-shadow:0 10px 30px rgba(2,6,23,0.6); display:none}
+
+/* cards grid */
+.grid{display:grid; grid-template-columns: 1fr 1fr; gap:16px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border-radius:12px; padding:16px; border:1px solid var(--glass); box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px 0; color:var(--accent-2)}
+
+/* forms */
+.row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+.col{flex:1}
+.input, input[type="text"], input[type="number"], input[type="month"], input[type="date"], textarea, select{
+  width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background:rgba(2,6,12,0.45); color:var(--text)
+}
+textarea{min-height:84px; resize:vertical}
+
+/* list */
+.list{display:flex; flex-direction:column; gap:10px; margin-top:12px; max-height:420px; overflow:auto; padding-right:6px}
+.item{display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02)}
+.item .meta{display:flex; flex-direction:column}
+.item h4{margin:0; font-size:15px; color:var(--text)}
+.item p{margin:6px 0 0 0; color:var(--muted); font-size:13px}
+.actions{display:flex; gap:8px; align-items:center}
+
+/* buttons */
+.btn{padding:10px 12px; border-radius:10px; border:none; background:var(--accent); color:#02111a; font-weight:800; cursor:pointer}
+.btn.ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.02)}
+.btn.danger{background:linear-gradient(90deg,var(--danger),#ff8f8f); color:#170505}
+.btn.small{padding:8px 10px; font-size:13px}
+
+/* hidden helper */
+.hidden{display:none}
+
+/* iframe preview */
+.preview-frame{width:100%; height:420px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); box-shadow:0 8px 20px rgba(2,6,23,0.5); background:#07090b}
+
+/* responsive */
+@media(max-width:980px){
+  .container{padding:10px; flex-direction:column}
+  .sidebar{position:relative; width:100%; height:auto}
+  .grid{grid-template-columns:1fr}
+}
+
+/* subtle animations */
+.fade{animation:fade .22s ease}
+@keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">ME</div>
+      <div>
+        <h1>Meghalaya Exam Prep</h1>
+        <p>Admin console</p>
+      </div>
+    </div>
+
+    <div class="nav" id="nav">
+      <button id="nav-categories" class="active" onclick="openPanel('categories')">Categories</button>
+      <button id="nav-papers" onclick="openPanel('papers')" style="display:none">Papers</button>
+      <button id="nav-years" onclick="openPanel('years')" style="display:none">Years</button>
+      <button id="nav-questions" onclick="openPanel('questions')" style="display:none">Questions</button>
+    </div>
+
+    <div style="margin-top:16px">
+      <div style="font-size:13px;color:var(--muted); margin-bottom:8px">Logged in as</div>
+      <div style="display:flex; gap:10px; align-items:center">
+        <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:#02111a;font-weight:800">W</div>
+        <div>
+          <div style="font-weight:800">Wan@admin</div>
+          <div style="font-size:12px;color:var(--muted)">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="title">
+        <h2>Admin Panel</h2>
+        <p>Manage categories, papers, years and questions</p>
+      </div>
+
+      <div class="menu">
+        <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
+        <div id="menuPop" class="menu-pop">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn small" onclick="goHome()">Open Homepage</button>
+            <button class="btn small ghost" onclick="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGIN PANEL (only visible when not logged) -->
+    <section id="loginPanel" class="card" style="max-width:520px;margin:18px 0;">
+      <h3 style="color:var(--accent)">Admin login</h3>
+      <p style="color:var(--muted)">Sign in to manage the platform</p>
+      <div style="margin-top:12px" class="row">
+        <div class="col">
+          <input id="loginUser" type="text" placeholder="Username" />
+        </div>
+        <div class="col" style="min-width:150px">
+          <input id="loginPass" type="password" placeholder="Password" />
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px">
+        <button class="btn" onclick="doLogin()">Sign in</button>
+        <button class="btn ghost" onclick="clearLogin()">Clear</button>
+      </div>
+      <div id="loginError" style="color:var(--danger); margin-top:8px; display:none">Invalid username or password</div>
+    </section>
+
+    <!-- CATEGORIES (initial visible after login) -->
+    <section id="panel-categories" class="card fade">
+      <h3>Categories</h3>
+      <p style="color:var(--muted)">Create categories. Open a category to manage its papers.</p>
+
+      <div class="row" style="margin-top:12px">
+        <div style="flex:2">
+          <input id="catName" placeholder="Category name (e.g., LDA)" />
+        </div>
+        <div style="flex:1; min-width:140px">
+          <input id="catSlug" placeholder="Slug (optional unique id)" />
+        </div>
+        <div style="min-width:120px">
+          <button class="btn" onclick="saveCategory()">Save</button>
+        </div>
+        <div style="min-width:120px">
+          <button class="btn ghost" onclick="clearCategoryForm()">Clear</button>
+        </div>
+      </div>
+
+      <div id="catList" class="list"></div>
+    </section>
+
+    <!-- PAPERS (hidden until a category is opened) -->
+    <section id="panel-papers" class="card fade" style="display:none">
+      <h3>Papers for <span id="activeCategoryName" style="color:var(--accent-2)"></span></h3>
+      <p style="color:var(--muted)">Add papers. Open a paper to add year/date entries and questions.</p>
+
+      <div class="row" style="margin-top:12px">
+        <div style="flex:2">
+          <input id="paperTitle" placeholder="Paper title (e.g., LDA SECTT MAY 2025)" />
+        </div>
+        <div style="min-width:130px">
+          <input id="paperMarks" type="number" placeholder="Total marks" />
+        </div>
+        <div style="min-width:130px">
+          <input id="paperDuration" type="number" placeholder="Duration min" />
+        </div>
+        <div style="min-width:120px">
+          <button class="btn" onclick="savePaper()">Save</button>
+        </div>
+        <div style="min-width:120px">
+          <button class="btn ghost" onclick="clearPaperForm()">Clear</button>
+        </div>
+      </div>
+
+      <div id="paperList" class="list"></div>
+    </section>
+
+    <!-- YEARS (hidden until a paper is opened) -->
+    <section id="panel-years" class="card fade" style="display:none">
+      <h3>Year / Date for <span id="activePaperName" style="color:var(--accent-2)"></span></h3>
+      <p style="color:var(--muted)">Create an entry that links a paper to a year/date. Attach a Google Drive share link for PDF if needed.</p>
+
+      <div class="row" style="margin-top:12px">
+        <div style="min-width:220px">
+          <label style="color:var(--muted); font-size:12px">Pick month (calendar)</label>
+          <input id="entryMonth" type="month" />
+        </div>
+        <div style="min-width:160px">
+          <label style="color:var(--muted); font-size:12px">Or year</label>
+          <input id="entryYear" type="number" placeholder="2025" />
+        </div>
+        <div style="flex:1">
+          <label style="color:var(--muted); font-size:12px">Google Drive share link (optional)</label>
+          <input id="entryDrive" placeholder="https://drive.google.com/file/d/FILE_ID/view?usp=sharing" />
+        </div>
+        <div style="min-width:120px; align-self:end">
+          <button class="btn" onclick="saveYearEntry()">Create</button>
+        </div>
+      </div>
+
+      <div id="yearList" class="list"></div>
+    </section>
+
+    <!-- QUESTIONS (hidden until a year entry is opened) -->
+    <section id="panel-questions" class="card fade" style="display:none">
+      <h3>Questions for <span id="activePaperYearName" style="color:var(--accent-2)"></span></h3>
+      <p style="color:var(--muted)">Add normal questions or passage-type. Attach PDF via Google Drive to show during practice.</p>
+
+      <div style="margin-top:12px" id="pdfPreviewWrap" class="hidden">
+        <div style="margin-bottom:8px; color:var(--muted)">Preview PDF for this paper-year</div>
+        <iframe id="pdfPreview" class="preview-frame"></iframe>
+      </div>
+
+      <hr />
+
+      <div style="margin-top:12px" class="card">
+        <div style="display:flex; gap:12px; flex-wrap:wrap">
+          <input id="qNumber" type="number" placeholder="Q no" style="width:110px" />
+          <input id="qText" placeholder="Question text" style="flex:1" />
+        </div>
+
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap">
+          <input id="qA" placeholder="Option A" />
+          <input id="qB" placeholder="Option B" />
+          <input id="qC" placeholder="Option C" />
+          <input id="qD" placeholder="Option D" />
+        </div>
+
+        <div style="margin-top:8px; display:flex; gap:12px; align-items:center">
+          <input id="qAnswer" placeholder="Correct answer (A/B/C/D)" style="width:180px" />
+          <input id="qYoutube" placeholder="YouTube link (optional)" style="flex:1" />
+          <button class="btn" onclick="saveQuestion()">Save</button>
+          <button class="btn ghost" onclick="clearQuestionForm()">Clear</button>
+        </div>
+
+        <div style="margin-top:8px">
+          <label style="color:var(--muted)">Passage (optional)</label>
+          <textarea id="qPassage" placeholder="If passage-based, paste passage here (it will show above questions)"></textarea>
+        </div>
+
+        <div style="margin-top:8px">
+          <label style="color:var(--muted)">Solution / Explanation</label>
+          <textarea id="qSolution" placeholder="Write solution or explanation"></textarea>
+        </div>
+      </div>
+
+      <div id="questionList" class="list" style="margin-top:12px"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ==========================
+   Data model and persistence
+   ========================== */
+const ADMIN_USER = 'Wan@admin';
+const ADMIN_PASS = 'W@npynd@p2002';
+const STORAGE_KEY = 'megp_state'; // full state
+// also write simplified keys for homepage
+const HOME_CATEGORIES_KEY = 'megp_categories';
+const HOME_PAPERS_KEY = 'megp_papers';
+
+let state = loadState();
+
+/* structure:
+state = {
+  categories: [{id,name,slug}],
+  papersByCategory: { catId: [ {id,title,duration,marks, years:[{id, label, month, year, driveLink, questions:[...] }]} ] }
+}
+*/
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return { categories:[], papersByCategory:{} };
+    return JSON.parse(raw);
+  }catch(e){ return { categories:[], papersByCategory:{} } }
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  // also save simplified keys for homepage
+  try{
+    const cats = state.categories.map(c => ({id:c.id, name:c.name, slug:c.slug}));
+    localStorage.setItem(HOME_CATEGORIES_KEY, JSON.stringify(cats));
+    // papers simplified: { catId: [ {id,title,years:[label,...]} ] }
+    const p = {};
+    Object.entries(state.papersByCategory).forEach(([catId, papers])=>{
+      p[catId] = papers.map(pp => ({ id: pp.id, title: pp.title, years: (pp.years||[]).map(y=>y.label) }));
+    });
+    localStorage.setItem(HOME_PAPERS_KEY, JSON.stringify(p));
+  }catch(e){}
+}
+
+/* helpers */
+function uid(pref='id'){ return pref + '_' + Date.now() + '_' + Math.floor(Math.random()*999) }
+function qs(id){ return document.getElementById(id) }
+function show(el){ if(!el) return; el.style.display = ''; }
+function hide(el){ if(!el) return; el.style.display = 'none' }
+function clearInputs(...ids){ ids.forEach(id => qs(id).value = '') }
+
+/* =========================
+   AUTH
+   ========================= */
+function isAuthed(){ return sessionStorage.getItem('megp_admin') === '1' }
+function doLogin(){
+  const u = qs('loginUser').value.trim();
+  const p = qs('loginPass').value;
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    sessionStorage.setItem('megp_admin','1');
+    qs('loginError').style.display='none';
+    initAfterLogin();
+  } else {
+    qs('loginError').style.display='block';
+  }
+}
+function clearLogin(){ qs('loginUser').value=''; qs('loginPass').value=''; qs('loginError').style.display='none'; }
+function logout(){ sessionStorage.removeItem('megp_admin'); location.reload(); }
+
+/* =========================
+   UI: menu
+   ========================= */
+document.addEventListener('click', (e)=>{
+  const menu = qs('menuPop');
+  const btn = qs('menuBtn');
+  if(!menu || !btn) return;
+  if(e.target === btn || btn.contains(e.target)){
+    // handled elsewhere
+  } else if(menu.contains(e.target)){
+    // inside menu
+  } else {
+    menu.style.display = 'none';
+  }
+});
+function toggleMenu(){
+  const menu = qs('menuPop');
+  if(menu.style.display === 'block') menu.style.display = 'none'; else menu.style.display = 'block';
+}
+function goHome(){ window.location.href = 'homepage.html' }
+
+/* =========================
+   Initial boot
+   ========================= */
+function initAfterLogin(){
+  // hide login panel
+  qs('loginPanel').style.display = 'none';
+  // show categories panel only
+  openPanel('categories');
+  renderCategories();
+  updateNavVisibility();
+}
+function boot(){
+  if(!isAuthed()){
+    // show login panel only
+    qs('loginPanel').style.display = '';
+    // hide other panels
+    ['panel-categories','panel-papers','panel-years','panel-questions'].forEach(id => qs(id).style.display = 'none');
+    // hide nav others
+    ['nav-papers','nav-years','nav-questions'].forEach(id => qs(id).style.display = 'none');
+    return;
+  }
+  // authed
+  qs('loginPanel').style.display = 'none';
+  renderCategories();
+  updateNavVisibility();
+  // show categories
+  openPanel('categories');
+}
+boot();
+
+/* =========================
+   NAV / PANELS
+   ========================= */
+function openPanel(key){
+  // hide menu
+  qs('menuPop').style.display = 'none';
+
+  // panels mapping
+  const panels = {
+    'categories':'panel-categories',
+    'papers':'panel-papers',
+    'years':'panel-years',
+    'questions':'panel-questions'
+  };
+  Object.values(panels).forEach(id => hide(qs(id)));
+  const panelId = panels[key];
+  show(qs(panelId));
+  // mark active nav button
+  ['nav-categories','nav-papers','nav-years','nav-questions'].forEach(id => qs(id).classList.remove('active'));
+  const navId = 'nav-'+ (key==='categories' ? 'categories' : key);
+  if(qs(navId)) qs(navId).classList.add('active');
+}
+
+/* =========================
+   Category: create / list / open
+   ========================= */
+function saveCategory(){
+  const name = qs('catName').value.trim();
+  const slug = qs('catSlug').value.trim();
+  if(!name){ alert('Enter category name'); return; }
+  const id = uid('cat');
+  state.categories.push({ id, name, slug: slug || id });
+  state.papersByCategory = state.papersByCategory || {};
+  state.papersByCategory[id] = state.papersByCategory[id] || [];
+  saveState();
+  renderCategories();
+  clearCategoryForm();
+  // open created category automatically
+  openCategory(id);
+}
+function renderCategories(){
+  const list = qs('catList'); list.innerHTML = '';
+  if(!state.categories.length){ list.innerHTML = '<div style="color:var(--muted)">No categories yet</div>'; return; }
+  state.categories.forEach(cat=>{
+    const div = document.createElement('div'); div.className='item fade';
+    div.innerHTML = `<div class="meta"><h4>${escape(cat.name)}</h4><p>${escape(cat.slug)}</p></div>
+      <div class="actions">
+        <button class="btn small" onclick="openCategory('${cat.id}')">Open</button>
+        <button class="btn ghost small" onclick="editCategory('${cat.id}')">Edit</button>
+        <button class="btn danger small" onclick="deleteCategory('${cat.id}')">Delete</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+function clearCategoryForm(){ qs('catName').value=''; qs('catSlug').value=''; }
+function editCategory(id){
+  const cat = state.categories.find(c=>c.id===id); if(!cat) return;
+  qs('catName').value = cat.name; qs('catSlug').value = cat.slug;
+  // optional: replace save to update mode - for simplicity we do manual delete+create if needed
+}
+function deleteCategory(id){
+  if(!confirm('Delete category? Papers under it will be removed.')) return;
+  state.categories = state.categories.filter(c=>c.id!==id);
+  delete state.papersByCategory[id];
+  saveState();
+  renderCategories();
+  updateNavVisibility();
+}
+
+/* =========================
+   Open category -> show papers
+   ========================= */
+let activeCategoryId = null;
+function openCategory(catId){
+  activeCategoryId = catId;
+  const cat = state.categories.find(c=>c.id===catId);
+  qs('activeCategoryName').textContent = cat ? cat.name : '';
+  // show papers panel and nav button
+  qs('nav-papers').style.display = '';
+  renderPapersForActiveCategory();
+  openPanel('papers');
+}
+
+/* =========================
+   Papers create / list / open
+   ========================= */
+function savePaper(){
+  if(!activeCategoryId){ alert('Open a category first'); return; }
+  const title = qs('paperTitle').value.trim();
+  const marks = parseInt(qs('paperMarks').value) || 0;
+  const duration = parseInt(qs('paperDuration').value) || 0;
+  if(!title){ alert('Enter paper title'); return; }
+  const id = uid('paper');
+  state.papersByCategory[activeCategoryId] = state.papersByCategory[activeCategoryId] || [];
+  state.papersByCategory[activeCategoryId].push({ id, title, marks, duration, years: [] });
+  saveState();
+  renderPapersForActiveCategory();
+  clearPaperForm();
+  // open paper automatically
+  openPaper(id);
+}
+function renderPapersForActiveCategory(){
+  const list = qs('paperList'); list.innerHTML = '';
+  const arr = (state.papersByCategory[activeCategoryId]||[]);
+  if(!arr.length){ list.innerHTML = '<div style="color:var(--muted)">No papers yet for this category</div>'; return; }
+  arr.forEach(p=>{
+    const div = document.createElement('div'); div.className='item fade';
+    const yearsCount = (p.years||[]).length;
+    div.innerHTML = `<div class="meta"><h4>${escape(p.title)}</h4><p>${yearsCount} year entries · ${p.duration} min · ${p.marks} marks</p></div>
+      <div class="actions">
+        <button class="btn small" onclick="openPaper('${p.id}')">Open</button>
+        <button class="btn ghost small" onclick="editPaper('${activeCategoryId}','${p.id}')">Edit</button>
+        <button class="btn danger small" onclick="deletePaper('${activeCategoryId}','${p.id}')">Delete</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+function clearPaperForm(){ qs('paperTitle').value=''; qs('paperMarks').value=''; qs('paperDuration').value=''; }
+function editPaper(catId,paperId){
+  const p = (state.papersByCategory[catId]||[]).find(x=>x.id===paperId); if(!p) return;
+  qs('paperTitle').value = p.title; qs('paperMarks').value = p.marks; qs('paperDuration').value = p.duration;
+  // we'll not implement complex update - user can delete and re-add for now
+}
+function deletePaper(catId,paperId){
+  if(!confirm('Delete paper and all its years and questions?')) return;
+  state.papersByCategory[catId] = (state.papersByCategory[catId]||[]).filter(x=>x.id!==paperId);
+  saveState();
+  renderPapersForActiveCategory();
+  updateNavVisibility();
+}
+
+/* =========================
+   Open paper -> show years
+   ========================= */
+let activePaperId = null;
+function openPaper(paperId){
+  activePaperId = paperId;
+  const p = (state.papersByCategory[activeCategoryId]||[]).find(x=>x.id===paperId);
+  qs('activePaperName').textContent = p ? p.title : '';
+  // show years nav/button
+  qs('nav-years').style.display = '';
+  renderYearList();
+  openPanel('years');
+}
+
+/* =========================
+   Years create / list / open
+   ========================= */
+function saveYearEntry(){
+  if(!activeCategoryId || !activePaperId){ alert('Open a paper first'); return; }
+  const monthVal = qs('entryMonth').value; // format "YYYY-MM"
+  const yearVal = qs('entryYear').value.trim(); // number string
+  const driveLink = qs('entryDrive').value.trim();
+  let label = '';
+  let month = null;
+  let year = null;
+  if(monthVal){
+    // extract YYYY-MM -> label
+    label = monthVal;
+    const parts = monthVal.split('-'); year = parseInt(parts[0]); month = parseInt(parts[1]);
+  } else if(yearVal){
+    label = String(yearVal);
+    year = parseInt(yearVal);
+  } else {
+    alert('Pick a month or enter a year'); return;
+  }
+  // normalize drive link to preview url if possible
+  const previewUrl = buildDrivePreview(driveLink);
+  // create
+  const yearsArr = getActivePaper().years || [];
+  const id = uid('yr');
+  yearsArr.push({ id, label, month, year, driveLink: previewUrl, questions: [] });
+  getActivePaper().years = yearsArr;
+  saveState();
+  renderYearList();
+  // open newly created
+  openYear(id);
+  // clear
+  qs('entryMonth').value=''; qs('entryYear').value=''; qs('entryDrive').value='';
+}
+function renderYearList(){
+  const list = qs('yearList'); list.innerHTML = '';
+  const yearsArr = getActivePaper().years || [];
+  if(!yearsArr.length){ list.innerHTML = '<div style="color:var(--muted)">No year entries yet</div>'; return; }
+  yearsArr.forEach(y=>{
+    const div = document.createElement('div'); div.className='item fade';
+    div.innerHTML = `<div class="meta"><h4>${escape(y.label)}</h4><p>${y.driveLink ? 'Has PDF link' : 'No PDF'}</p></div>
+      <div class="actions">
+        <button class="btn small" onclick="openYear('${y.id}')">Open</button>
+        <button class="btn ghost small" onclick="editYear('${y.id}')">Edit</button>
+        <button class="btn danger small" onclick="deleteYear('${y.id}')">Delete</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+function getActivePaper(){ return (state.papersByCategory[activeCategoryId]||[]).find(x=>x.id===activePaperId) || { years:[] } }
+function editYear(yearId){
+  const y = (getActivePaper().years||[]).find(x=>x.id===yearId); if(!y) return;
+  if(y.month){
+    qs('entryMonth').value = (y.month<10? y.year+'-0'+y.month : y.year+'-'+y.month);
+  } else if(y.year){
+    qs('entryYear').value = y.year;
+  }
+  qs('entryDrive').value = y.driveLink || '';
+}
+function deleteYear(yearId){
+  if(!confirm('Delete this year entry and its questions?')) return;
+  const arr = getActivePaper().years || [];
+  getActivePaper().years = arr.filter(x=>x.id!==yearId);
+  saveState();
+  renderYearList();
+}
+let activeYearId = null;
+function openYear(yearId){
+  activeYearId = yearId;
+  // show nav for questions
+  qs('nav-questions').style.display = '';
+  // show panel questions and set label
+  const y = (getActivePaper().years||[]).find(x=>x.id===yearId);
+  qs('activePaperYearName').textContent = (y ? `${getActivePaper().title} • ${y.label}` : '');
+  // show pdf if present
+  if(y && y.driveLink){
+    qs('pdfPreview').src = y.driveLink;
+    qs('pdfPreviewWrap').classList.remove('hidden');
+  } else {
+    qs('pdfPreviewWrap').classList.add('hidden');
+    qs('pdfPreview').src = '';
+  }
+  renderQuestionList();
+  openPanel('questions');
+}
+
+/* =========================
+   Questions create / list / edit / delete
+   ========================= */
+function saveQuestion(){
+  if(!activeCategoryId || !activePaperId || !activeYearId){ alert('Open a paper-year first'); return; }
+  const number = parseInt(qs('qNumber').value) || 1;
+  const text = qs('qText').value.trim();
+  if(!text){ alert('Enter question text'); return; }
+  const obj = {
+    id: uid('q'),
+    number,
+    text,
+    options: { A: qs('qA').value, B: qs('qB').value, C: qs('qC').value, D: qs('qD').value },
+    answer: qs('qAnswer').value.trim(),
+    youtube: qs('qYoutube').value.trim(),
+    passage: qs('qPassage').value.trim(),
+    solution: qs('qSolution').value.trim()
+  };
+  const yearObj = (getActivePaper().years||[]).find(x=>x.id===activeYearId);
+  yearObj.questions = yearObj.questions || [];
+  yearObj.questions.push(obj);
+  saveState();
+  clearQuestionForm();
+  renderQuestionList();
+}
+function renderQuestionList(){
+  const list = qs('questionList'); list.innerHTML = '';
+  const yearObj = (getActivePaper().years||[]).find(x=>x.id===activeYearId);
+  const arr = (yearObj && yearObj.questions) ? yearObj.questions : [];
+  if(!arr.length){ list.innerHTML = '<div style="color:var(--muted)">No questions yet</div>'; return; }
+  arr.forEach(q=>{
+    const div = document.createElement('div'); div.className='item fade';
+    const passageHtml = q.passage ? `<div style="margin-top:6px;color:var(--muted)">Passage: ${escape(q.passage.substring(0,120))}…</div>` : '';
+    div.innerHTML = `<div class="meta">
+        <h4>Q${q.number}: ${escape(q.text.substring(0,140))}</h4>
+        <p style="color:var(--muted)">A:${escape(q.options.A)} | B:${escape(q.options.B)} | C:${escape(q.options.C)} | D:${escape(q.options.D)}</p>
+        <p style="color:var(--muted)">Answer: ${escape(q.answer)} ${q.youtube ? ' · YouTube' : ''}</p>
+        ${passageHtml}
+        <p style="color:var(--muted)">Solution: ${escape(q.solution.substring(0,140))}</p>
+      </div>
+      <div class="actions">
+        <button class="btn small" onclick="editQuestion('${q.id}')">Edit</button>
+        <button class="btn danger small" onclick="deleteQuestion('${q.id}')">Delete</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+function clearQuestionForm(){
+  qs('qNumber').value = nextQuestionNumber();
+  qs('qText').value = ''; qs('qA').value=''; qs('qB').value=''; qs('qC').value=''; qs('qD').value='';
+  qs('qAnswer').value=''; qs('qYoutube').value=''; qs('qPassage').value=''; qs('qSolution').value='';
+}
+function nextQuestionNumber(){
+  const yearObj = (getActivePaper().years||[]).find(x=>x.id===activeYearId);
+  const arr = (yearObj && yearObj.questions) ? yearObj.questions : [];
+  return arr.length ? (Math.max(...arr.map(q=>q.number))+1) : 1;
+}
+function editQuestion(qid){
+  const yearObj = (getActivePaper().years||[]).find(x=>x.id===activeYearId);
+  const q = (yearObj.questions||[]).find(x=>x.id===qid); if(!q) return;
+  qs('qNumber').value = q.number;
+  qs('qText').value = q.text;
+  qs('qA').value = q.options.A; qs('qB').value = q.options.B; qs('qC').value = q.options.C; qs('qD').value = q.options.D;
+  qs('qAnswer').value = q.answer; qs('qYoutube').value = q.youtube; qs('qPassage').value = q.passage; qs('qSolution').value = q.solution;
+  // remove existing q then save will re-add as new; for simplicity editing replaces original
+  yearObj.questions = yearObj.questions.filter(x=>x.id!==qid);
+  saveState();
+  renderQuestionList();
+}
+function deleteQuestion(qid){
+  if(!confirm('Delete this question?')) return;
+  const yearObj = (getActivePaper().years||[]).find(x=>x.id===activeYearId);
+  yearObj.questions = (yearObj.questions||[]).filter(x=>x.id!==qid);
+  saveState();
+  renderQuestionList();
+}
+
+/* =========================
+   Drive link helper
+   ========================= */
+function buildDrivePreview(link){
+  if(!link) return '';
+  // Accept raw file id or full share link
+  // If link contains "/file/d/FILE_ID" extract
+  const m = link.match(/\/d\/([A-Za-z0-9_-]{10,})/);
+  if(m && m[1]) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  // if link contains id= param
+  const m2 = link.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
+  if(m2 && m2[1]) return `https://drive.google.com/file/d/${m2[1]}/preview`;
+  // if already a preview URL or direct file id
+  if(link.startsWith('https://drive.google.com/file/d/')) return link.replace('/view','/preview');
+  if(link.length > 20 && /^[A-Za-z0-9_-]+$/.test(link)) return `https://drive.google.com/file/d/${link}/preview`;
+  // fallback: return original link
+  return link;
+}
+
+/* =========================
+   UI helpers
+   ========================= */
+function updateNavVisibility(){
+  // show/hide nav buttons depending on data
+  qs('nav-papers').style.display = activeCategoryId ? '' : 'none';
+  qs('nav-years').style.display = activePaperId ? '' : 'none';
+  qs('nav-questions').style.display = activeYearId ? '' : 'none';
+}
+function escape(s){ if(!s && s!==0) return ''; return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* =========================
+   Utility: open paper/year if persisted or just render
+   ========================= */
+function updateAfterChanges(){
+  saveState();
+  renderCategories();
+  if(activeCategoryId) renderPapersForActiveCategory();
+  if(activePaperId) renderYearList();
+  if(activeYearId) renderQuestionList();
+  updateNavVisibility();
+}
+
+/* =========================
+   Save on exit
+   ========================= */
+window.addEventListener('beforeunload', ()=>{ saveState(); });
+
+/* Final small init */
+(function(){
+  // make sure the state object has required keys
+  state.categories = state.categories || [];
+  state.papersByCategory = state.papersByCategory || {};
+  // set next qnumber defaults
+  if(isAuthed()){
+    initAfterLogin();
+  }
+})();
+</script>
+</body>
+</html>

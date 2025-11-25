@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Result</title>
+<style>
+:root {
+  --bg:#0A0A0A;
+  --card:#1C1C1C;
+  --blue:#1976D2;
+  --green:#43A047;
+  --red:#E53935;
+  --text:#FFFFFF;
+  --muted:#AAAAAA;
+  --gold:#FFD700;
+}
+
+body{background:var(--bg);color:var(--text);min-height:100vh;padding:20px;font-family:Arial,sans-serif;}
+.container{max-width:960px;margin:auto;}
+.page-header{text-align:center;margin-bottom:20px;}
+.page-title{font-size:28px;color:var(--gold);margin-bottom:6px;}
+.page-subtitle{font-size:16px;color:var(--muted);}
+.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:16px;}
+.btn{background:var(--blue);border:none;color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer;margin:2px;}
+.btn-primary{background:#0D47A1;}
+.btn:hover{opacity:0.9;}
+.flex{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+.muted{color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="resultContainer"></div>
+</div>
+
+<script>
+const resultData = JSON.parse(localStorage.getItem('lastResult')); // assume result stored here
+const container = document.getElementById('resultContainer');
+
+if(!resultData){
+  container.innerHTML = '<div class="card"><div class="muted text-center">No result data available</div><button class="btn btn-primary" onclick="goHome()">Go Home</button></div>';
+}else{
+  let showReview = false;
+
+  function toggleReview(){showReview=!showReview; renderResult();}
+
+  function goHome(){window.location.href='homepage.html';}
+
+  function renderResult(){
+    container.innerHTML='';
+    const headerCard=document.createElement('div');headerCard.className='page-header';
+    headerCard.innerHTML=`<h1 class="page-title">Test Completed!</h1><p class="page-subtitle">${resultData.paperName}</p>`;
+    container.appendChild(headerCard);
+
+    const resultCard=document.createElement('div');resultCard.className='card';
+    resultCard.innerHTML=`<div style="font-weight:700;font-size:20px;margin-bottom:16px;">Your Result</div>
+      <div class="flex flex-col gap-1">
+        <div class="muted">Score: <strong style="color:var(--text);font-size:18px;">${resultData.score}</strong> / ${resultData.maxScore}</div>
+        <div class="muted">Percentage: <strong style="color:var(--blue);font-size:18px;">${resultData.percentage}%</strong></div>
+        <div class="muted">Mode: ${resultData.mode==='practice'?'Practice':'Mock Test'}</div>
+      </div>
+      <div class="flex gap-2 mt-3">
+        <button class="btn" onclick="toggleReview()">Review Answers</button>
+        <button class="btn btn-primary" onclick="goHome()">Go Home</button>
+      </div>`;
+    container.appendChild(resultCard);
+
+    if(showReview){
+      const reviewDiv=document.createElement('div');reviewDiv.className='mt-3';
+      reviewDiv.innerHTML='<h3 style="margin-bottom:16px;font-size:20px;">Answer Review</h3>';
+      resultData.questions.forEach((q,index)=>{
+        const qCard=document.createElement('div');qCard.className='card';qCard.style.marginBottom='12px';
+        let optionsHTML='';
+        ['A','B','C','D'].forEach(opt=>{
+          let style='padding:8px;border-radius:8px;';
+          if(opt===q.correctAnswer) style+='background:rgba(67,160,71,0.2);border-left:4px solid var(--green);color:var(--green);font-weight:600;';
+          if(resultData.answers[q.id]===opt && resultData.answers[q.id]!==q.correctAnswer) style+='background:rgba(229,57,53,0.1);border-left:4px solid var(--red);color:var(--red);font-weight:600;';
+          optionsHTML+=`<div style="${style}"><strong>${opt})</strong> ${q['option'+opt]}</div>`;
+        });
+        qCard.innerHTML=`<div style="font-size:16px;margin-bottom:12px;font-weight:500;">${index+1}. ${q.questionText}</div>
+          <div class="flex flex-col gap-1">${optionsHTML}</div>
+          <div style="padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);margin-top:8px;">
+            <div class="muted" style="font-size:12px;font-weight:700;">Solution:</div>
+            <div class="muted" style="font-size:13px;margin-top:4px;">${q.solution}</div>
+          </div>`;
+        reviewDiv.appendChild(qCard);
+      });
+      container.appendChild(reviewDiv);
+    }
+  }
+
+  renderResult();
+}
+</script>
+</body>
+</html>

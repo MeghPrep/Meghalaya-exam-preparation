@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About - Meghalaya Exam Preparation</title>
+<style>
+:root {
+  --bg: #0A0A0A;
+  --card: #1C1C1C;
+  --blue: #1976D2;
+  --gold: #FFD700;
+  --text: #FFFFFF;
+  --muted: #AAAAAA;
+  --hover: #333;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: auto;
+  padding: 20px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 32px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.card h3 {
+  margin-bottom: 12px;
+  font-size: 20px;
+  color: var(--blue);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.btn {
+  background: var(--blue);
+  border: none;
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 12px;
+}
+
+.btn:hover {
+  background: #0d47a1;
+}
+
+ul {
+  margin-left: 20px;
+  margin-bottom: 12px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+@media (max-width:768px){
+  .page-title{ font-size:24px; }
+  .card{ padding:12px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Back button -->
+  <button class="btn" onclick="window.location.href='homepage.html'">&larr; Back to Home</button>
+
+  <div class="page-header">
+    <h1 class="page-title">About</h1>
+    <p class="page-subtitle">Meghalaya Exam Preparation Platform</p>
+  </div>
+
+  <!-- About this App -->
+  <div class="card">
+    <h3>About This App</h3>
+    <div class="muted">
+      <p>Meghalaya Exam Preparation is a comprehensive platform designed to help candidates
+         prepare for various government exams in Meghalaya, including MPSC LDA cum Typist and
+         other competitive examinations.</p>
+      <p>This platform offers two modes of practice:</p>
+      <ul>
+        <li><strong>Practice Mode:</strong> Validate answers immediately and view detailed solutions</li>
+        <li><strong>Mock Test Mode:</strong> Simulate real exam conditions with customizable timers</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="card">
+    <h3>Features</h3>
+    <div class="muted">
+      <ul>
+        <li>Multiple exam categories and question papers</li>
+        <li>Detailed solutions for every question</li>
+        <li>Video explanations via YouTube integration</li>
+        <li>Track your progress with user accounts</li>
+        <li>Guest mode for quick practice</li>
+        <li>Comprehensive test history and analytics</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Security & Privacy -->
+  <div class="card">
+    <h3>Security & Privacy</h3>
+    <div class="muted">
+      <p>Your data is secure. For production deployment, ensure to encrypt your question bank
+         before publishing to protect intellectual property.</p>
+    </div>
+  </div>
+
+  <!-- Ownership & Rights -->
+  <div class="card">
+    <h3>Ownership & Rights</h3>
+    <div class="muted">
+      <p>This platform is exclusively owned and maintained by Wanpyndapbiang Nongrang. 
+         Unauthorized modification, distribution, or use of this application is strictly prohibited.</p>
+      <p>Only authorized personnel with explicit permission from the owner may modify or contribute to this platform.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="card text-center">
+    <div class="muted" style="margin-bottom:8px; font-weight:600;">© 2025 Wanpyndapbiang Nongrang. All rights reserved.</div>
+    <div class="muted" style="font-size:12px;">Version 1.0.0</div>
+    <div class="muted" style="font-size:11px; margin-top:8px;">This application and all its contents are protected by copyright law.</div>
+  </div>
+
+</div>
+</body>
+</html>
