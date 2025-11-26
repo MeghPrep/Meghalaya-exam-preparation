@@ -57,6 +57,16 @@ body {
   margin-bottom: 16px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
+.card-link {
+  text-decoration: none;  /* removes underline */
+  color: inherit;         /* keeps text color same as parent */
+  display: block;         /* makes whole card area clickable */
+}
+
+.card-link .card {
+  cursor: pointer;        /* shows hand cursor on hover */
+}
+
 
 .card:hover {
   transform: translateY(-3px);
@@ -141,11 +151,14 @@ body {
         <div class="muted">Practice mode - validate and view solutions immediately</div>
       </div>
 
-      <!-- Mock Test Mode -->
-      <div class="card card-interactive" onclick="goToMode('mock')">
-        <h3>Start Mock Test</h3>
-        <div class="muted">Choose timer, full test experience. Solutions after submit</div>
-      </div>
+<!-- Mock Test Mode -->
+<a href="CategorySelection.html" class="card-link">
+  <div class="card card-interactive">
+    <h3>Start Mock Test</h3>
+    <div class="muted">Choose timer, full test experience. Solutions after submit</div>
+  </div>
+</a>
+
 
       <!-- History & About -->
       <div class="flex gap-2">
@@ -200,4 +213,4 @@ function goToMode(mode){
 }
 </script>
 </body>
-</html>
+      </html>
