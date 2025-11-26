@@ -15,12 +15,7 @@
   --hover: #333;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
+* { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 
 body {
   background: var(--bg);
@@ -32,95 +27,46 @@ body {
   max-width: 960px;
   margin: auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
-.page-title {
-  font-size: 32px;
-  color: var(--gold);
-  margin-bottom: 8px;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  color: var(--muted);
-}
+.page-title { font-size: 32px; color: var(--gold); margin-bottom: 6px; }
+.page-subtitle { font-size: 16px; color: var(--muted); }
 
 .card {
   background: var(--card);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
+  cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.card-link {
-  text-decoration: none;  /* removes underline */
-  color: inherit;         /* keeps text color same as parent */
-  display: block;         /* makes whole card area clickable */
-}
 
-.card-link .card {
-  cursor: pointer;        /* shows hand cursor on hover */
-}
+.card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
 
+.card h3 { margin-bottom: 6px; font-size: 20px; color: var(--blue); }
+.muted { color: var(--muted); font-size: 14px; }
 
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  cursor: pointer;
-}
+.flex { display: flex; }
+.flex-gap { gap: 12px; }
+.text-center { text-align: center; }
 
-.card-interactive h3 {
-  color: var(--blue);
-}
+.btn { background: var(--blue); border:none; color: var(--text); padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:12px; }
+.btn:hover { background:#0d47a1; }
 
-.card-interactive:hover h3 {
-  color: #55aaff;
-}
+.footer { margin-top:auto; text-align:center; }
+.footer .muted { margin-bottom:8px; font-weight:600; font-size:14px; }
 
-.flex {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.btn {
-  background: var(--blue);
-  border: none;
-  color: var(--text);
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn:hover {
-  background: #0d47a1;
-}
-
-.muted {
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.watermark {
-  text-align: center;
-  font-size: 24px;
-  color: rgba(255,215,0,0.1);
-  margin-top: 40px;
-}
-
-@media (max-width: 768px) {
-  .page-title { font-size: 24px; }
-  .card { padding: 12px; }
+@media (max-width:768px){
+  .page-title{ font-size:24px; }
+  .card{ padding:12px; }
 }
 </style>
 </head>
@@ -132,72 +78,31 @@ body {
     <p class="page-subtitle">Your Complete Exam Preparation Platform</p>
   </div>
 
-  <div id="userCard" class="card" style="display:none;">
-    <div class="flex justify-between items-center">
-      <div>
-        <div id="userName" style="font-weight:600;"></div>
-        <div id="userEmail" class="muted mt-1"></div>
-      </div>
-      <button class="btn" onclick="logout()">Logout</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="flex flex-col gap-2">
-
-<!-- Practice Mode -->
-<a href="CategorySelection.html" class="card-link">
-  <div class="card card-interactive">
+  <!-- Practice & Mock Test -->
+  <div class="card" onclick="window.location.href='CategorySelection.html?mode=practice'">
     <h3>Start Practice</h3>
     <div class="muted">Practice mode - validate and view solutions immediately</div>
   </div>
-</a>
-<!-- Mock Test Mode -->
-<a href="CategorySelection.html" class="card-link">
-  <div class="card card-interactive">
+
+  <div class="card" onclick="window.location.href='CategorySelection.html?mode=mock'">
     <h3>Start Mock Test</h3>
     <div class="muted">Choose timer, full test experience. Solutions after submit</div>
   </div>
-</a>
 
+  <!-- Admin Panel -->
+  <div class="card" style="border: 1px solid var(--gold); opacity:0.8;" onclick="window.location.href='admin-login.html'">
+    <h3 style="color: var(--gold);">Admin Panel</h3>
+    <div class="muted">Manage categories, papers, and questions</div>
+  </div>
 
-      <!-- History & About -->
-      <div class="flex gap-2">
-        <div class="card card-interactive" style="flex:1;" onclick="window.location.href='about.html'">
-          <h3>About</h3>
-          <div class="muted">App info and copyright</div>
-        </div>
-      </div>
-
-      <!-- Admin Panel -->
-      <div class="card card-interactive" onclick="window.location.href='admin.html'" style="border-color: var(--gold); opacity:0.8;">
-        <h3 style="color:var(--gold)">Admin Panel</h3>
-        <div class="muted">Manage categories, papers, and questions</div>
-      </div>
-
+  <!-- Footer / About -->
+  <div class="footer">
+    <div class="card" onclick="window.location.href='about.html'">
+      <h3>About</h3>
+      <div class="muted">App info and copyright</div>
     </div>
   </div>
 
-  <div class="watermark">Meghalaya Exam Prep</div>
 </div>
-
-<script>
-// Display user info from localStorage
-const userData = localStorage.getItem('user');
-if(userData){
-  const user = JSON.parse(userData);
-  document.getElementById('userCard').style.display = 'block';
-  document.getElementById('userName').textContent = 'Welcome, ' + user.name + '!';
-  document.getElementById('userEmail').textContent = user.email;
-}
-
-// Logout function
-function logout(){
-  localStorage.removeItem('user');
-  location.reload();
-}
-
-// Redirect to category-selection.html with mode
-</script>
 </body>
-  </html>
+</html>
