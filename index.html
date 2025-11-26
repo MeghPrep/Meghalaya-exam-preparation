@@ -163,20 +163,10 @@ body {
 
       <!-- History & About -->
       <div class="flex gap-2">
-        <div class="card card-interactive" style="flex:1;" onclick="window.location.href='history.html'">
-          <h3>History</h3>
-          <div class="muted">View your test results</div>
-        </div>
         <div class="card card-interactive" style="flex:1;" onclick="window.location.href='about.html'">
           <h3>About</h3>
           <div class="muted">App info and copyright</div>
         </div>
-      </div>
-
-      <!-- Login / Sign Up -->
-      <div id="loginCard" class="card card-interactive" onclick="window.location.href='login.html'">
-        <h3 style="color:var(--blue)">Login / Sign Up</h3>
-        <div class="muted">Sign in to save your progress and history</div>
       </div>
 
       <!-- Admin Panel -->
@@ -199,7 +189,6 @@ if(userData){
   document.getElementById('userCard').style.display = 'block';
   document.getElementById('userName').textContent = 'Welcome, ' + user.name + '!';
   document.getElementById('userEmail').textContent = user.email;
-  document.getElementById('loginCard').style.display = 'none';
 }
 
 // Logout function
@@ -209,9 +198,6 @@ function logout(){
 }
 
 // Redirect to category-selection.html with mode
-function goToMode(mode){
-  window.location.href = `category-selection.html?mode=${mode}`;
-}
 </script>
 </body>
-</html>
+  </html>
