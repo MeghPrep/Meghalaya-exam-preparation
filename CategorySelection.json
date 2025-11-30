@@ -1,0 +1,30 @@
+{
+    "categories": [
+        {
+            "id": 1764432378865,
+            "name": "Gram Sevak",
+            "desc": "Focuses on Gram Sevak exam subjects, concepts, and practice.",
+            "subs": [
+                {
+                    "id": 1764432413128,
+                    "name": "DSC Mairang",
+                    "desc": "",
+                    "papers": [
+                        {
+                            "id": 1764432430418,
+                            "name": "Paper 1",
+                            "desc": "",
+                            "years": [
+                                {
+                                    "id": 1764432466695,
+                                    "year": "2025",
+                                    "desc": "date: 29th November, 2025"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
