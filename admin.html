@@ -1,227 +1,251 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Meghalaya Exam Prep — Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Manage Categories & Quiz</title>
 <style>
-/* --------------------------
-   Dark professional theme
-   -------------------------- */
-:root{
-  --bg:#06070a;
-  --panel:#0f1317;
-  --card:#11161a;
-  --accent:#0f4c75;    /* deep blue */
-  --accent-2:#2f7fb3;
-  --muted:#98a4ad;
-  --text:#e6eef6;
-  --danger:#e16b6b;
-  --success:#32c48d;
-  --glass: rgba(255,255,255,0.03);
-  --radius:12px;
-  --shadow: 0 10px 30px rgba(2,6,23,0.6);
-  --mono: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-}
-*{box-sizing:border-box}
-html,body{height:100%; margin:0; font-family:var(--mono); background:linear-gradient(180deg,var(--bg),#081018 140%); color:var(--text); -webkit-font-smoothing:antialiased}
-a{color:inherit}
-
-/* wrapper */
-.container{max-width:1180px; margin:28px auto; padding:18px; display:flex; gap:18px; align-items:flex-start; min-height:78vh}
-
-/* sidebar */
-.sidebar{width:300px; min-width:220px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:18px; border:1px solid var(--glass); box-shadow:var(--shadow); position:sticky; top:22px}
-.brand{display:flex; gap:12px; align-items:center; margin-bottom:8px}
-.logo{width:48px; height:48px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); font-weight:800; color:#08111a}
-.brand h1{margin:0; font-size:16px; color:var(--accent); letter-spacing:0.2px}
-.brand p{margin:0; font-size:12px; color:var(--muted)}
-
-/* nav */
-.nav{display:flex; flex-direction:column; gap:10px; margin-top:12px}
-.nav button{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; background:transparent; border:1px solid transparent; color:var(--accent-2); font-weight:700; cursor:pointer; transition:all .14s}
-.nav button:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,76,117,0.06)}
-.nav button.active{background:linear-gradient(90deg, rgba(15,76,117,0.08), rgba(47,127,179,0.02)); border:1px solid rgba(47,127,179,0.06); color:var(--accent-2)}
-
-/* content */
-.content{flex:1; display:flex; flex-direction:column; gap:16px}
-
-/* header inside content */
-.header{display:flex; justify-content:space-between; align-items:center; gap:12px}
-.header .title{display:flex; flex-direction:column}
-.header h2{margin:0; color:var(--accent); font-size:20px}
-.header p{margin:0; color:var(--muted); font-size:13px}
-.header .menu{display:flex; align-items:center; gap:8px}
-
-/* menu icon */
-.menu-btn{background:transparent; color:var(--muted); border:1px solid transparent; padding:8px 10px; border-radius:8px; cursor:pointer}
-.menu-pop{position:absolute; right:28px; top:72px; background:var(--card); border-radius:10px; padding:8px; border:1px solid var(--glass); box-shadow:0 10px 30px rgba(2,6,23,0.6); display:none}
-
-/* cards grid */
-.grid{display:grid; grid-template-columns: 1fr 1fr; gap:16px}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border-radius:12px; padding:16px; border:1px solid var(--glass); box-shadow:var(--shadow)}
-.card h3{margin:0 0 8px 0; color:var(--accent-2)}
-
-/* forms */
-.row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
-.col{flex:1}
-.input, input[type="text"], input[type="number"], input[type="month"], input[type="date"], textarea, select{
-  width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background:rgba(2,6,12,0.45); color:var(--text)
-}
-textarea{min-height:84px; resize:vertical}
-
-/* list */
-.list{display:flex; flex-direction:column; gap:10px; margin-top:12px; max-height:420px; overflow:auto; padding-right:6px}
-.item{display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02)}
-.item .meta{display:flex; flex-direction:column}
-.item h4{margin:0; font-size:15px; color:var(--text)}
-.item p{margin:6px 0 0 0; color:var(--muted); font-size:13px}
-.actions{display:flex; gap:8px; align-items:center}
-
-/* buttons */
-.btn{padding:10px 12px; border-radius:10px; border:none; background:var(--accent); color:#02111a; font-weight:800; cursor:pointer}
-.btn.ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.02)}
-.btn.danger{background:linear-gradient(90deg,var(--danger),#ff8f8f); color:#170505}
-.btn.small{padding:8px 10px; font-size:13px}
-
-/* hidden helper */
-.hidden{display:none}
-
-/* iframe preview */
-.preview-frame{width:100%; height:420px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); box-shadow:0 8px 20px rgba(2,6,23,0.5); background:#07090b}
-
-/* responsive */
-@media(max-width:980px){
-  .container{padding:10px; flex-direction:column}
-  .sidebar{position:relative; width:100%; height:auto}
-  .grid{grid-template-columns:1fr}
-}
-
-/* subtle animations */
-.fade{animation:fade .22s ease}
-@keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+body{background:#0A0A0A;color:white;font-family:Arial;padding:16px;}
+.container{max-width:900px;margin:auto;}
+.card{background:#1E1E1E;padding:16px;margin-bottom:14px;border-radius:8px;}
+.card h3{margin-top:0;}
+input,textarea,select{width:100%;padding:10px;background:#111;color:white;border:1px solid #333;border-radius:6px;margin-bottom:10px;}
+button{padding:10px 16px;background:#1976D2;color:white;border:none;border-radius:6px;cursor:pointer;margin-right:8px;margin-top:6px;}
+button:hover{background:#1565c0;}
+.small-btn{background:#D32F2F;}
+.small-btn:hover{background:#b71c1c;}
+.section{margin-bottom:20px;}
+.json-output{width:100%;height:300px;background:#000;color:#0f0;font-family:monospace;padding:10px;border-radius:6px;}
+.accordion{background:#1E1E1E;padding:14px;width:100%;border-radius:8px;margin-bottom:8px;cursor:pointer;border:none;text-align:left;font-size:16px;}
+.accordion:hover{background:#222;}
+.panel{background:#111;padding:12px;margin-bottom:12px;border-radius:8px;display:none;}
+.subcard{background:#222;padding:12px;margin:8px 0;border-radius:6px;}
+@media(max-width:600px){button{width:100%;margin-right:0;margin-bottom:6px;}}
 </style>
 </head>
-<body>
-<div class="container">
+<body><div class="container"><h2>Admin Panel</h2><!-- CATEGORY --><div class="card">
+<h3>Add Category</h3>
+<input id="catName" placeholder="Category Name">
+<textarea id="catDesc" placeholder="Description"></textarea>
+<button onclick="addCategory()">Add</button>
+</div><!-- SUBCATEGORY --><div class="card">
+<h3>Add Subcategory</h3>
+<select id="parentCategory"></select>
+<input id="subName" placeholder="Subcategory Name">
+<textarea id="subDesc" placeholder="Description"></textarea>
+<button onclick="addSub()">Add</button>
+</div><!-- PAPER --><div class="card">
+<h3>Add Paper</h3>
+<select id="parentSub"></select>
+<input id="paperName" placeholder="Paper Name">
+<textarea id="paperDesc" placeholder="Description"></textarea>
+<button onclick="addPaper()">Add</button>
+</div><!-- YEAR --><div class="card">
+<h3>Add Year</h3>
+<select id="parentPaper"></select>
+<input id="yearText" placeholder="Year Example 2019">
+<textarea id="yearDesc" placeholder="Description"></textarea>
+<button onclick="addYear()">Add</button>
+</div><!-- QUIZ MANAGEMENT --><div class="card">
+<h3>Manage Quiz Questions</h3>
+<select id="selectCat" onchange="populateSub()"></select>
+<select id="selectSub" onchange="populatePaper()"></select>
+<select id="selectPaper" onchange="populateYear()"></select>
+<select id="selectYear"></select><input id="qNumber" placeholder="Question Number">
+<textarea id="qText" placeholder="Question Text"></textarea>
+<input id="optA" placeholder="Option A">
+<input id="optB" placeholder="Option B">
+<input id="optC" placeholder="Option C">
+<input id="optD" placeholder="Option D">
+<select id="correctOpt">
+<option value="">Select Correct Option</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+<option value="D">D</option>
+</select>
+<textarea id="qSolution" placeholder="Solution"></textarea>
+<input id="qYoutube" placeholder="YouTube URL">
+<input id="qDrive" placeholder="Drive URL">
+<button onclick="addQuestion()">Add Question</button>
+</div><h3>Categories</h3>
+<div id="categoryList"></div><h3>JSON Output</h3>
+<textarea id="jsonBox" class="json-output" readonly></textarea>
+<button onclick="copyJSON()">Copy JSON</button></div><script>
+let data = {categories:[]};
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo">ME</div>
-      <div>
-        <h1>Meghalaya Exam Prep</h1>
-        <p>Admin console</p>
-      </div>
-    </div>
+// ===== RENDER FUNCTION =====
+function render(){
+    let catList=document.getElementById("categoryList");
+    let catSel=document.getElementById("parentCategory");
+    let subSel=document.getElementById("parentSub");
+    let paperSel=document.getElementById("parentPaper");
 
-    <div class="nav" id="nav">
-      <button id="nav-categories" class="active" onclick="openPanel('categories')">Categories</button>
-      <button id="nav-papers" onclick="openPanel('papers')" style="display:none">Papers</button>
-      <button id="nav-years" onclick="openPanel('years')" style="display:none">Years</button>
-      <button id="nav-questions" onclick="openPanel('questions')" style="display:none">Questions</button>
-    </div>
+    catList.innerHTML="";
+    catSel.innerHTML="<option value=''>Select</option>";
+    subSel.innerHTML="<option value=''>Select</option>";
+    paperSel.innerHTML="<option value=''>Select</option>";
 
-    <div style="margin-top:16px">
-      <div style="font-size:13px;color:var(--muted); margin-bottom:8px">Logged in as</div>
-      <div style="display:flex; gap:10px; align-items:center">
-        <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:#02111a;font-weight:800">W</div>
-        <div>
-          <div style="font-weight:800">Wan@admin</div>
-          <div style="font-size:12px;color:var(--muted)">Administrator</div>
-        </div>
-      </div>
-    </div>
-  </aside>
+    data.categories.forEach(cat=>{
+        catSel.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+        let btn=document.createElement("button");
+        btn.className="accordion";
+        btn.textContent=cat.name;
+        let panel=document.createElement("div");
+        panel.className="panel";
+        let subHTML="";
+        cat.subs.forEach(sub=>{
+            subSel.innerHTML += `<option value="${sub.id}">${sub.name}</option>`;
+            let paperHTML="";
+            sub.papers.forEach(p=>{
+                paperSel.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                let yearHTML="";
+                p.years.forEach(y=>{
+                    yearHTML += `<div class='subcard'><strong>${y.year}</strong> ${y.desc} <button class="small-btn" onclick="delYear(${cat.id},${sub.id},${p.id},${y.id})">Delete</button></div>`;
+                });
+                paperHTML += `<div class='subcard'><strong>${p.name}</strong> ${p.desc} <button class="small-btn" onclick="delPaper(${cat.id},${sub.id},${p.id})">Delete</button><h5>Years</h5>${yearHTML||"No years"}</div>`;
+            });
+            subHTML += `<div class='subcard'><strong>${sub.name}</strong> ${sub.desc} <button class="small-btn" onclick="delSub(${cat.id},${sub.id})">Delete</button>${paperHTML}</div>`;
+        });
+        panel.innerHTML=subHTML||"<p>No subcategories</p>";
+        btn.onclick=()=>panel.style.display=panel.style.display==="block"?"none":"block";
+        catList.appendChild(btn);
+        catList.appendChild(panel);
+    });
+    renderQuizDropdowns();
+    document.getElementById("jsonBox").value = JSON.stringify(data,null,4);
+}
 
-  <!-- CONTENT -->
-  <main class="content">
+// ===== ADD FUNCTIONS =====
+function addCategory(){
+    let name=catName.value.trim();
+    if(!name)return alert("Enter name");
+    data.categories.push({id:Date.now(),name,desc:catDesc.value.trim(),subs:[]});
+    catName.value="";catDesc.value="";
+    render();
+}
 
-    <!-- HEADER -->
-    <div class="header">
-      <div class="title">
-        <h2>Admin Panel</h2>
-        <p>Manage categories, papers, years and questions</p>
-      </div>
+function addSub(){
+    let pid=Number(parentCategory.value);
+    if(!pid)return alert("Select category");
+    let cat=data.categories.find(c=>c.id===pid);
+    cat.subs.push({id:Date.now(),name:subName.value.trim(),desc:subDesc.value.trim(),papers:[]});
+    subName.value="";subDesc.value="";
+    render();
+}
 
-      <div class="menu">
-        <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
-        <div id="menuPop" class="menu-pop">
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="btn small" onclick="goHome()">Open Homepage</button>
-            <button class="btn small ghost" onclick="logout()">Logout</button>
-          </div>
-        </div>
-      </div>
-    </div>
+function addPaper(){
+    let sid=Number(parentSub.value);
+    if(!sid)return alert("Select subcategory");
+    for(let c of data.categories){
+        let s=c.subs.find(x=>x.id===sid);
+        if(s)s.papers.push({id:Date.now(),name:paperName.value.trim(),desc:paperDesc.value.trim(),years:[]});
+    }
+    paperName.value="";paperDesc.value="";
+    render();
+}
 
-    <!-- LOGIN PANEL (only visible when not logged) -->
-    <section id="loginPanel" class="card" style="max-width:520px;margin:18px 0;">
-      <h3 style="color:var(--accent)">Admin login</h3>
-      <p style="color:var(--muted)">Sign in to manage the platform</p>
-      <div style="margin-top:12px" class="row">
-        <div class="col">
-          <input id="loginUser" type="text" placeholder="Username" />
-        </div>
-        <div class="col" style="min-width:150px">
-          <input id="loginPass" type="password" placeholder="Password" />
-        </div>
-      </div>
-      <div style="display:flex; gap:12px; margin-top:12px">
-        <button class="btn" onclick="doLogin()">Sign in</button>
-        <button class="btn ghost" onclick="clearLogin()">Clear</button>
-      </div>
-      <div id="loginError" style="color:var(--danger); margin-top:8px; display:none">Invalid username or password</div>
-    </section>
+function addYear(){
+    let pid=Number(parentPaper.value);
+    if(!pid)return alert("Select paper");
+    for(let c of data.categories){
+        for(let s of c.subs){
+            let p=s.papers.find(x=>x.id===pid);
+            if(p)p.years.push({id:Date.now(),year:yearText.value.trim(),desc:yearDesc.value.trim()});
+        }
+    }
+    yearText.value="";yearDesc.value="";
+    render();
+}
 
-    <!-- CATEGORIES (initial visible after login) -->
-    <section id="panel-categories" class="card fade">
-      <h3>Categories</h3>
-      <p style="color:var(--muted)">Create categories. Open a category to manage its papers.</p>
+// ===== DELETE FUNCTIONS =====
+function delSub(cid,sid){let c=data.categories.find(x=>x.id===cid);c.subs=c.subs.filter(x=>x.id!==sid);render();}
+function delPaper(cid,sid,pid){let c=data.categories.find(x=>x.id===cid);let s=c.subs.find(x=>x.id===sid);s.papers=s.papers.filter(x=>x.id!==pid);render();}
+function delYear(cid,sid,pid,yid){let c=data.categories.find(x=>x.id===cid);let s=c.subs.find(x=>x.id===sid);let p=s.papers.find(x=>x.id===pid);p.years=p.years.filter(x=>x.id!==yid);render();}
 
-      <div class="row" style="margin-top:12px">
-        <div style="flex:2">
-          <input id="catName" placeholder="Category name (e.g., LDA)" />
-        </div>
-        <div style="flex:1; min-width:140px">
-          <input id="catSlug" placeholder="Slug (optional unique id)" />
-        </div>
-        <div style="min-width:120px">
-          <button class="btn" onclick="saveCategory()">Save</button>
-        </div>
-        <div style="min-width:120px">
-          <button class="btn ghost" onclick="clearCategoryForm()">Clear</button>
-        </div>
-      </div>
+// ===== QUIZ MANAGEMENT =====
+function renderQuizDropdowns(){
+    const selectCat=document.getElementById("selectCat");
+    const selectSub=document.getElementById("selectSub");
+    const selectPaper=document.getElementById("selectPaper");
+    const selectYear=document.getElementById("selectYear");
+    if(!selectCat) return;
+    selectCat.innerHTML="<option value=''>Select Category</option>";
+    selectSub.innerHTML="<option value=''>Select Subcategory</option>";
+    selectPaper.innerHTML="<option value=''>Select Paper</option>";
+    selectYear.innerHTML="<option value=''>Select Year</option>";
+    data.categories.forEach(c=>selectCat.innerHTML+=`<option value="${c.id}">${c.name}</option>`);
+}
 
-      <div id="catList" class="list"></div>
-    </section>
+function populateSub(){
+    const catId=Number(document.getElementById("selectCat").value);
+    const subSel=document.getElementById("selectSub");
+    subSel.innerHTML="<option value=''>Select Subcategory</option>";
+    if(!catId)return;
+    const cat=data.categories.find(c=>c.id===catId);
+    if(cat)cat.subs.forEach(s=>subSel.innerHTML+=`<option value="${s.id}">${s.name}</option>`);
+    populatePaper();
+}
 
-    <!-- PAPERS (hidden until a category is opened) -->
-    <section id="panel-papers" class="card fade" style="display:none">
-      <h3>Papers for <span id="activeCategoryName" style="color:var(--accent-2)"></span></h3>
-      <p style="color:var(--muted)">Add papers. Open a paper to add year/date entries and questions.</p>
+function populatePaper(){
+    const catId=Number(document.getElementById("selectCat").value);
+    const subId=Number(document.getElementById("selectSub").value);
+    const paperSel=document.getElementById("selectPaper");
+    paperSel.innerHTML="<option value=''>Select Paper</option>";
+    if(!catId||!subId)return;
+    const sub=data.categories.find(c=>c.id===catId).subs.find(s=>s.id===subId);
+    if(sub)sub.papers.forEach(p=>paperSel.innerHTML+=`<option value="${p.id}">${p.name}</option>`);
+    populateYear();
+}
 
-      <div class="row" style="margin-top:12px">
-        <div style="flex:2">
-          <input id="paperTitle" placeholder="Paper title (e.g., LDA SECTT MAY 2025)" />
-        </div>
-        <div style="min-width:130px">
-          <input id="paperMarks" type="number" placeholder="Total marks" />
-        </div>
-        <div style="min-width:130px">
-          <input id="paperDuration" type="number" placeholder="Duration min" />
-        </div>
-        <div style="min-width:120px">
-          <button class="btn" onclick="savePaper()">Save</button>
-        </div>
-        <div style="min-width:120px">
-          <button class="btn ghost" onclick="clearPaperForm()">Clear</button>
-        </div>
-      </div>
+function populateYear(){
+    const catId=Number(document.getElementById("selectCat").value);
+    const subId=Number(document.getElementById("selectSub").value);
+    const paperId=Number(document.getElementById("selectPaper").value);
+    const yearSel=document.getElementById("selectYear");
+    yearSel.innerHTML="<option value=''>Select Year</option>";
+    if(!catId||!subId||!paperId)return;
+    const paper=data.categories.find(c=>c.id===catId).subs.find(s=>s.id===subId).papers.find(p=>p.id===paperId);
+    if(paper)paper.years.forEach(y=>{ if(!y.questions)y.questions=[]; yearSel.innerHTML+=`<option value="${y.id}">${y.year}</option>` });
+}
 
-      <div id="paperList" class="list"></div>
-    </section>
+function addQuestion(){
+    const catId=Number(document.getElementById("selectCat").value);
+    const subId=Number(document.getElementById("selectSub").value);
+    const paperId=Number(document.getElementById("selectPaper").value);
+    const yearId=Number(document.getElementById("selectYear").value);
+    if(!catId||!subId||!paperId||!yearId) return alert("Select all levels");
+    const q={
+        id:"q"+Date.now(),
+        questionNumber:Number(document.getElementById("qNumber").value),
+        questionText:document.getElementById("qText").value.trim(),
+        optionA:document.getElementById("optA").value.trim(),
+        optionB:document.getElementById("optB").value.trim(),
+        optionC:document.getElementById("optC").value.trim(),
+        optionD:document.getElementById("optD").value.trim(),
+        correctAnswer:document.getElementById("correctOpt").value,
+        solution:document.getElementById("qSolution").value.trim(),
+        youtubeUrl:document.getElementById("qYoutube").value.trim(),
+        driveUrl:document.getElementById("qDrive").value.trim()
+    };
+    const yearObj=data.categories.find(c=>c.id===catId).subs.find(s=>s.id===subId).papers.find(p=>p.id===paperId).years.find(y=>y.id===yearId);
+    if(!yearObj.questions) yearObj.questions=[];
+    yearObj.questions.push(q);
+    ["qNumber","qText","optA","optB","optC","optD","qSolution","qYoutube","qDrive"].forEach(id=>document.getElementById(id).value="");
+    alert("Question added");
+    render();
+}
+
+// ===== COPY JSON =====
+function copyJSON(){
+    const box=document.getElementById("jsonBox");
+    box.select();
+    document.execCommand("copy");
+    alert("Copied");
+}
+
+render();
+</script></body>
+                             </html>ection>
 
     <!-- YEARS (hidden until a paper is opened) -->
     <section id="panel-years" class="card fade" style="display:none">
