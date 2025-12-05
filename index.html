@@ -3,106 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meghalaya Exam Preparation</title>
-<style>
-:root {
-  --bg: #0A0A0A;
-  --card: #1C1C1C;
-  --blue: #1976D2;
-  --gold: #FFD700;
-  --text: #FFFFFF;
-  --muted: #AAAAAA;
-  --hover: #333;
-}
-
-* { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
-
-.container {
-  max-width: 960px;
-  margin: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.page-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.page-title { font-size: 32px; color: var(--gold); margin-bottom: 6px; }
-.page-subtitle { font-size: 16px; color: var(--muted); }
-
-.card {
-  background: var(--card);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-
-.card h3 { margin-bottom: 6px; font-size: 20px; color: var(--blue); }
-.muted { color: var(--muted); font-size: 14px; }
-
-.flex { display: flex; }
-.flex-gap { gap: 12px; }
-.text-center { text-align: center; }
-
-.btn { background: var(--blue); border:none; color: var(--text); padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:12px; }
-.btn:hover { background:#0d47a1; }
-
-.footer { margin-top:auto; text-align:center; }
-.footer .muted { margin-bottom:8px; font-weight:600; font-size:14px; }
-
-@media (max-width:768px){
-  .page-title{ font-size:24px; }
-  .card{ padding:12px; }
-}
-</style>
+<title>Meghalaya Exam Prep SPA</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
 
-  <div class="page-header">
-    <h1 class="page-title">Meghalaya Exam Preparation</h1>
-    <p class="page-subtitle">Your Complete Exam Preparation Platform</p>
+<!-- HOME PAGE -->
+<div id="homePage" class="page active">
+  <h1 class="page-title">Meghalaya Exam Preparation</h1>
+  <p class="page-subtitle">Your Complete Exam Platform</p>
+
+  <div class="card" onclick="showPage('practicePage')">
+    <h3>Start Practice Mode</h3>
+    <p>Practice mode - validate and view solutions immediately</p>
   </div>
 
-  <!-- Practice & Mock Test -->
-  <div class="card" onclick="window.location.href='CategorySelection.html?mode=practice'">
-    <h3>Start Practice</h3>
-    <div class="muted">Practice mode - validate and view solutions immediately</div>
+  <div class="card" onclick="showPage('aboutPage')">
+    <h3>About</h3>
+    <p>Learn more about this platform</p>
   </div>
+</div>
 
-  <div class="card" onclick="window.location.href='CategorySelection.html?mode=mock'">
-    <h3>Start Mock Test</h3>
-    <div class="muted">Choose timer, full test experience. Solutions after submit</div>
-  </div>
+<!-- PRACTICE PAGE (hidden initially) -->
+<div id="practicePage" class="page">
+  <h2>Practice Mode</h2>
+  <p>Select a category to start practicing.</p>
+  <!-- Categories will be dynamically loaded here -->
+  <div id="practiceCategoryList"></div>
+  <button class="btn" onclick="showPage('homePage')">Back to Home</button>
+</div>
+<!-- Subcategory Page -->
+<div id="subCategoryPage" class="page">
+  <h1 class="page-title">Select Subcategory</h1>
+  <div id="subCategoryList"></div>
+  <button class="btn" onclick="showPage('practicePage')">← Back to Categories</button>
+</div>
+<!-- Paper Selection Page -->
+<div id="paperPage" class="page">
+  <h1 class="page-title" id="paperPageTitle">Select Paper</h1>
 
-  <!-- Admin Panel -->
-  <div class="card" style="border: 1px solid var(--gold); opacity:0.8;" onclick="window.location.href='admin-login.html'">
-    <h3 style="color: var(--gold);">Admin Panel</h3>
-    <div class="muted">Manage categories, papers, and questions</div>
-  </div>
+  <div id="paperList"></div>
 
-  <!-- Footer / About -->
-  <div class="footer">
-    <div class="card" onclick="window.location.href='about.html'">
-      <h3>About</h3>
-      <div class="muted">App info and copyright</div>
+  <button class="btn" onclick="showPage('subCategoryPage')">← Back to Subcategories</button>
+</div>
+
+<!-- Year Selection Page -->
+<div id="yearPage" class="page">
+  <h1 class="page-title">Select Year</h1>
+  <div id="yearList"></div>
+  <button class="btn" onclick="showPage('paperPage')">← Back to Papers</button>
+</div>
+
+<!-- ABOUT PAGE (hidden initially) -->
+<div id="aboutPage" class="page">
+  <h1 class="page-title">About This Platform</h1>
+  <div class="card">
+    <h3>About This App</h3>
+    <div class="muted">
+      <p>Meghalaya Exam Preparation is a comprehensive platform designed to help candidates prepare for various government exams in Meghalaya, including MPSC LDA cum Typist and other competitive examinations.
+      </p>
+      <p>This platform offers two modes of practice:</p>
+      <ul>
+        <li><strong>Practice Mode:</strong> Validate answers immediately and view detailed solutions</li>
+        <li><strong>Mock Test Mode:</strong> Simulate real exam conditions with customizable timers</li>
+      </ul>
     </div>
   </div>
 
+  <div class="card">
+    <h3>Features</h3>
+    <div class="muted">
+      <ul>
+        <li>Multiple exam categories and question papers</li>
+        <li>Detailed solutions for every question</li>
+        <li>Video explanations via YouTube integration</li>
+        <li>Track your progress with user accounts</li>
+        <li>Guest mode for quick practice</li>
+        <li>Comprehensive test history and analytics</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Security & Privacy</h3>
+    <div class="muted">
+      <p>Your data is secure. For production deployment, ensure to encrypt your question bank
+         before publishing to protect intellectual property.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Ownership & Rights</h3>
+    <div class="muted">
+      <p>This platform is exclusively owned and maintained by Wanpyndapbiang Nongrang. Unauthorized modification, distribution, or use of this application is strictly prohibited.</p>
+      <p>Only authorized personnel with explicit permission from the owner may modify or contribute to this platform.</p>
+    </div>
+  </div>
+
+  <div class="card text-center">
+    <div class="muted" style="margin-bottom:8px; font-weight:600;">© 2025 Wanpyndapbiang Nongrang. All rights reserved.</div>
+    <div class="muted" style="font-size:12px;">Version 1.0.0</div>
+    <div class="muted" style="font-size:11px; margin-top:8px;">This application and all its contents are protected by copyright law.</div>
+  </div>
 </div>
+
+
+</section>
+
+<script src="js/app.js"></script>
 </body>
 </html>
