@@ -24,48 +24,47 @@
   </div>
 </div>
 
-<!-- PRACTICE PAGE (hidden initially) -->
+<!-- PRACTICE PAGE -->
 <div id="practicePage" class="page">
   <h2>Practice Mode</h2>
   <p>Select a category to start practicing.</p>
-  <!-- Categories will be dynamically loaded here -->
   <div id="practiceCategoryList"></div>
   <button class="btn" onclick="showPage('homePage')">Back to Home</button>
 </div>
-<!-- Subcategory Page -->
+
+<!-- SUBCATEGORY PAGE -->
 <div id="subCategoryPage" class="page">
   <h1 class="page-title">Select Subcategory</h1>
   <div id="subCategoryList"></div>
   <button class="btn" onclick="showPage('practicePage')">← Back to Categories</button>
 </div>
-<!-- Paper Selection Page -->
+
+<!-- PAPER PAGE -->
 <div id="paperPage" class="page">
   <h1 class="page-title" id="paperPageTitle">Select Paper</h1>
-
   <div id="paperList"></div>
-
   <button class="btn" onclick="showPage('subCategoryPage')">← Back to Subcategories</button>
 </div>
 
-<!-- Year Selection Page -->
+<!-- YEAR PAGE -->
 <div id="yearPage" class="page">
   <h1 class="page-title">Select Year</h1>
   <div id="yearList"></div>
   <button class="btn" onclick="showPage('paperPage')">← Back to Papers</button>
 </div>
 
-<!-- ABOUT PAGE (hidden initially) -->
+<!-- ABOUT PAGE -->
 <div id="aboutPage" class="page">
   <h1 class="page-title">About This Platform</h1>
+
   <div class="card">
     <h3>About This App</h3>
     <div class="muted">
-      <p>Meghalaya Exam Preparation is a comprehensive platform designed to help candidates prepare for various government exams in Meghalaya, including MPSC LDA cum Typist and other competitive examinations.
-      </p>
-      <p>This platform offers two modes of practice:</p>
+      <p>Meghalaya Exam Preparation is a comprehensive platform designed to help candidates prepare for various government exams in Meghalaya, including MPSC LDA cum Typist and other competitive examinations.</p>
+      <p>This platform offers two modes:</p>
       <ul>
-        <li><strong>Practice Mode:</strong> Validate answers immediately and view detailed solutions</li>
-        <li><strong>Mock Test Mode:</strong> Simulate real exam conditions with customizable timers</li>
+        <li><strong>Practice Mode:</strong> Validate answers immediately and view solutions</li>
+        <li><strong>Mock Test Mode:</strong> Simulate real exam conditions with timers</li>
       </ul>
     </div>
   </div>
@@ -75,41 +74,37 @@
     <div class="muted">
       <ul>
         <li>Multiple exam categories and question papers</li>
-        <li>Detailed solutions for every question</li>
-        <li>Video explanations via YouTube integration</li>
-        <li>Track your progress with user accounts</li>
+        <li>Detailed solutions</li>
+        <li>Video explanations via YouTube</li>
+        <li>Track your progress</li>
         <li>Guest mode for quick practice</li>
-        <li>Comprehensive test history and analytics</li>
+        <li>Test history and analytics</li>
       </ul>
     </div>
   </div>
 
   <div class="card">
-    <h3>Security & Privacy</h3>
+    <h3>Security and Privacy</h3>
     <div class="muted">
-      <p>Your data is secure. For production deployment, ensure to encrypt your question bank
-         before publishing to protect intellectual property.</p>
+      <p>Your data is secure. For production deployment, encrypt your question bank before publishing.</p>
     </div>
   </div>
 
   <div class="card">
-    <h3>Ownership & Rights</h3>
+    <h3>Ownership and Rights</h3>
     <div class="muted">
-      <p>This platform is exclusively owned and maintained by Wanpyndapbiang Nongrang. Unauthorized modification, distribution, or use of this application is strictly prohibited.</p>
-      <p>Only authorized personnel with explicit permission from the owner may modify or contribute to this platform.</p>
+      <p>This platform is owned and maintained by Wanpyndapbiang Nongrang. Unauthorized modification, distribution, or use is prohibited.</p>
+      <p>Only authorized personnel with written permission may contribute to this platform.</p>
     </div>
   </div>
 
   <div class="card text-center">
     <div class="muted" style="margin-bottom:8px; font-weight:600;">© 2025 Wanpyndapbiang Nongrang. All rights reserved.</div>
     <div class="muted" style="font-size:12px;">Version 1.0.0</div>
-    <div class="muted" style="font-size:11px; margin-top:8px;">This application and all its contents are protected by copyright law.</div>
+    <div class="muted" style="font-size:11px; margin-top:8px;">This application and its contents are protected by copyright law.</div>
   </div>
 </div>
-
-
-</section>
-
 <script src="js/app.js"></script>
+<script src="js/data.js"></script>
 </body>
-</html>
+      </html>
