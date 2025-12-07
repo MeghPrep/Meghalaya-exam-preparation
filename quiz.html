@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz</title>
+<link rel="stylesheet" href="css/quiz.css">
+<style>
+  /* Result Summary Styles */
+  #summaryContainer {
+    margin-top: 20px;
+  }
+  .summary-card {
+    background: #1E1F25;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .summary-card h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #FFD54A;
+  }
+  .summary-card p {
+    margin: 4px 0;
+  }
+  .summary-card .user-answer.correct {
+    color: #43A047;
+    font-weight: 600;
+  }
+  .summary-card .user-answer.wrong {
+    color: #E53935;
+    font-weight: 600;
+  }
+  .summary-card .correct-answer {
+    color: #4FA3FF;
+  }
+  .progress-bar {
+    background: #24262E;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 20px;
+    margin: 10px 0;
+  }
+  #progressFill {
+    background: #43A047;
+    height: 100%;
+    width: 0%;
+    transition: width 1s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-wrapper">
+  <div class="quiz-card">
+    <div class="quiz-header">
+      <div class="title" id="quizTitle">Loading Quiz...</div>
+      <div class="timer" id="timer"></div>
+    </div>
+
+    <!-- Mode Selection -->
+    <div id="modeSelect" class="mode-card">
+      <h2 class="mode-title">Choose Quiz Mode</h2>
+      <div class="mode-options">
+        <button class="mode-btn" onclick="startPractice()">Practice Mode</button>
+        <button class="mode-btn" onclick="startMock()">Mock Test</button>
+      </div>
+    </div>
+
+    <!-- Question Block -->
+    <div class="question-block hidden" id="questionBlock">
+      <div class="q-text" id="questionText"></div>
+      <div class="options-box" id="optionsContainer"></div>
+      <div class="btn-row" id="btnRow">
+        <button class="btn validate-btn" id="validateBtn" onclick="validateAnswer()">Validate</button>
+        <button class="btn" onclick="prevQuestion()">Prev</button>
+        <button class="btn" onclick="nextQuestion()">Next</button>
+      </div>
+      <div class="solution-box hidden" id="solutionPanel">
+        <div id="solutionText"></div>
+        <div class="resource-links">
+          <a href="#" target="_blank" id="youtubeLink" class="link-btn">YouTube</a>
+          <a href="#" target="_blank" id="pdfLink" class="link-btn">PDF</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Panel -->
+    <div class="solution-box hidden" id="resultPanel">
+      <h2>Final Result</h2>
+      <div class="progress-bar">
+        <div id="progressFill"></div>
+      </div>
+      <p>Score: <span id="resultScore">0</span></p>
+      <p>Percentage: <span id="resultPercentage">0%</span></p>
+      <p>Correct: <span id="resultCorrect">0</span></p>
+      <p>Wrong: <span id="resultWrong">0</span></p>
+
+      <h3>Question Summary</h3>
+      <div id="summaryContainer"></div>
+
+      <button class="btn" onclick="window.location.href='index.html'">Go Home</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const paperFile = urlParams.get("paper");
+const year = urlParams.get("year");
+
+let questions = [];
+let currentIndex = 0;
+let selectedOption = null;
+let mode = null;
+let timerInterval;
+let timeLeft = 0;
+
+// Load quiz JSON
+async function loadQuizFile() {
+  try {
+    const res = await fetch(`json/${paperFile}_${year}.json`);
+    if(!res.ok) throw new Error("JSON not found");
+    const data = await res.json();
+    document.getElementById("quizTitle").textContent = data.title || "Quiz";
+    questions = data.questions;
+
+    // Restore saved answers from localStorage
+    const saved = localStorage.getItem(`quiz_${paperFile}_${year}`);
+    if(saved){
+      const savedQuestions = JSON.parse(saved);
+      questions.forEach((q,i)=>{
+        if(savedQuestions[i] && savedQuestions[i].selectedOption){
+          q.selectedOption = savedQuestions[i].selectedOption;
+        }
+      });
+    }
+  } catch(err) {
+    alert("Failed to load quiz file");
+    console.error(err);
+  }
+}
+
+function startPractice(){
+  mode="practice";
+  document.getElementById("modeSelect").classList.add("hidden");
+  document.getElementById("questionBlock").classList.remove("hidden");
+  document.getElementById("validateBtn").style.display="inline-block";
+  loadQuestion();
+}
+
+function startMock(){
+  mode="mock";
+  document.getElementById("modeSelect").classList.add("hidden");
+  document.getElementById("questionBlock").classList.remove("hidden");
+  document.getElementById("validateBtn").style.display="none";
+
+  let mins = prompt("Enter timer in minutes","60");
+  timeLeft = parseInt(mins)*60;
+  startTimer();
+  loadQuestion();
+}
+
+function startTimer(){
+  timerInterval = setInterval(()=>{
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      submitQuiz();
+      return;
+    }
+    const m=Math.floor(timeLeft/60);
+    const s=timeLeft%60;
+    document.getElementById("timer").textContent=`Time Left: ${m}m ${s}s`;
+    timeLeft--;
+  },1000);
+}
+
+function loadQuestion(){
+  const q = questions[currentIndex];
+  const optionsBox = document.getElementById("optionsContainer");
+  document.getElementById("questionText").textContent = q.question;
+  optionsBox.innerHTML = "";
+  selectedOption = q.selectedOption || null;
+
+  for(let key of ['a','b','c','d']){
+    if(!q.options[key]) continue;
+    const btn = document.createElement("div");
+    btn.className = "option";
+    btn.innerHTML = `<span class="label">${key.toUpperCase()}.</span> ${q.options[key]}`;
+    if(selectedOption === key) btn.classList.add("selected");
+
+    btn.onclick = ()=>{
+      selectedOption = key;
+      q.selectedOption = key; // Save only if user clicks
+      optionsBox.querySelectorAll('.option').forEach(o=>o.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      // Save to localStorage
+      localStorage.setItem(`quiz_${paperFile}_${year}`, JSON.stringify(questions));
+    };
+    optionsBox.appendChild(btn);
+  }
+
+  document.getElementById("solutionPanel").classList.add("hidden");
+}
+
+function validateAnswer(){
+  if(!selectedOption) { 
+    alert("Select an option"); 
+    return; 
+  }
+
+  const q = questions[currentIndex];
+  const opts = document.getElementById("optionsContainer").children;
+
+  for(let i = 0; i < opts.length; i++){
+    const key = Object.keys(q.options)[i];
+    opts[i].classList.remove("correct","wrong");
+    if(key === q.correct) opts[i].classList.add("correct");
+    if(key === selectedOption && key !== q.correct) opts[i].classList.add("wrong");
+  }
+
+  document.getElementById("solutionText").textContent = q.solution || "";
+  document.getElementById("youtubeLink").href = q.youtube || "#";
+  document.getElementById("pdfLink").href = q.pdf || "#";
+  document.getElementById("solutionPanel").classList.remove("hidden");
+}
+
+function nextQuestion(){
+  currentIndex++;
+  if(currentIndex >= questions.length){
+    submitQuiz();
+  } else {
+    loadQuestion();
+  }
+}
+
+function prevQuestion(){
+  if(currentIndex > 0){
+    currentIndex--;
+    loadQuestion();
+  }
+}
+
+function submitQuiz(){
+  if(mode==="mock") clearInterval(timerInterval);
+
+  document.getElementById("questionBlock").classList.add("hidden");
+  document.getElementById("resultPanel").classList.remove("hidden");
+
+  let correctCount = 0;
+  let wrongCount = 0;
+  const totalQuestions = questions.length;
+
+  questions.forEach(q=>{
+    if(q.selectedOption){
+      if(q.selectedOption === q.correct) correctCount++;
+      else wrongCount++;
+    }
+  });
+
+  const score = (correctCount*2) - (wrongCount*0.25);
+  const percentage = Math.round((correctCount/totalQuestions)*100);
+
+  document.getElementById('resultScore').textContent = score.toFixed(2);
+  document.getElementById('resultPercentage').textContent = percentage + "%";
+  document.getElementById('resultCorrect').textContent = correctCount;
+  document.getElementById('resultWrong').textContent = wrongCount;
+
+  animateProgressBar(percentage);
+  launchConfetti();
+
+  // Show Question Summary
+  const summaryContainer = document.getElementById('summaryContainer');
+  summaryContainer.innerHTML = "";
+
+  questions.forEach((q,i)=>{
+    const userAnsText = q.selectedOption ? q.options[q.selectedOption] : "Not Answered";
+    const correctAnsText = q.options[q.correct] || "N/A";
+    const isCorrect = q.selectedOption === q.correct;
+
+    const card = document.createElement("div");
+    card.className = "summary-card";
+    card.innerHTML = `
+      <h4>Q${i+1}: ${q.question}</h4>
+      <p>Your Answer: <span class="user-answer ${isCorrect?'correct':'wrong'}">${userAnsText}</span></p>
+      <p>Correct Answer: <span class="correct-answer">${correctAnsText}</span></p>
+    `;
+    summaryContainer.appendChild(card);
+  });
+
+  // Save final answers
+  localStorage.setItem(`quiz_${paperFile}_${year}`, JSON.stringify(questions));
+}
+
+function animateProgressBar(percent){
+  const bar = document.getElementById('progressFill');
+  bar.style.width = "0%";
+  setTimeout(()=>{ bar.style.width = percent + "%"; },200);
+}
+
+function launchConfetti(){
+  const duration = 1200;
+  const end = Date.now() + duration;
+  (function frame(){
+    confetti({ particleCount:5, angle:60, spread:55, origin:{x:0} });
+    confetti({ particleCount:5, angle:120, spread:55, origin:{x:1} });
+    if(Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
+
+function goHome(){
+  localStorage.removeItem(`quiz_${paperFile}_${year}`);
+  window.location.href='index.html';
+}
+
+loadQuizFile();
+</script>
+
+
+</body>
+</html>
