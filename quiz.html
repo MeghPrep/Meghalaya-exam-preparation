@@ -183,7 +183,7 @@ function startTimer(){
 function loadQuestion(){
   const q = questions[currentIndex];
   const optionsBox = document.getElementById("optionsContainer");
-  document.getElementById("questionText").textContent = q.question;
+  document.getElementById("questionText").innerHTML = q.question;
   optionsBox.innerHTML = "";
   selectedOption = q.selectedOption || null;
 
@@ -225,7 +225,7 @@ function validateAnswer(){
     if(key === selectedOption && key !== q.correct) opts[i].classList.add("wrong");
   }
 
-  document.getElementById("solutionText").textContent = q.solution || "";
+  document.getElementById("solutionText").innerHTML = q.solution || "";
   document.getElementById("youtubeLink").href = q.youtube || "#";
   document.getElementById("pdfLink").href = q.pdf || "#";
   document.getElementById("solutionPanel").classList.remove("hidden");
