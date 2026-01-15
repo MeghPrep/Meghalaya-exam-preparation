@@ -441,6 +441,40 @@ function startTimer(){
     },1000);
 }
 
+function renderQuestion(question) {
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+
+  // Show serial number + question
+  questionEl.innerHTML = `Q${question.sn}. ${question.question}`;
+
+  // Clear previous options
+  optionsEl.innerHTML = "";
+
+  // Render options
+  for (const key in question.options) {
+    const optionText = question.options[key];
+
+    const optionDiv = document.createElement("div");
+    optionDiv.className = "option";
+    optionDiv.innerHTML = `
+      <label>
+        <input type="radio" name="option" value="${key}">
+        <b>${key.toUpperCase()}.</b> ${optionText}
+      </label>
+    `;
+
+    optionsEl.appendChild(optionDiv);
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < questions.length - 1) {
+    currentIndex++;
+    renderQuestion(questions[currentIndex]);
+  }
+}
+
 function loadQuestion(){
     const q=questions[currentIndex];
     const optionsBox=document.getElementById("optionsContainer");
