@@ -58,5 +58,25 @@ const QUIZ_TREE = [
         ]
       }
     ]
-  }
+  },
+{
+  id: "3",
+  name: "Topic-wise Practice",
+  desc: "Independent topic-based quizzes for focused revision",
+  subcategories: [
+    {
+      id: "301",
+      name: "Environment & Biodiversity",
+      desc: "Environmental topics related to Meghalaya and India",
+      papers: [
+        {
+          id: "MBB_TOPIC_P1",
+          name: "Meghalaya Biodiversity Board (MBB)",
+          desc: "MCQs based on Meghalaya Biodiversity Board – About Us",
+          years: [2025]
+        }
+      ]
+    }
+  ]
+}
 ];
